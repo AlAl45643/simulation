@@ -193,3 +193,15 @@ plt.legend(["Susceptible",
             "Pre-symptomatic", "Asymptomatic", "Symptomatic", "Recovered"])
 
 plt.savefig("plot.png")
+
+# Peak number of infections at a time
+peak_infections = 0
+for i in range(0, avg_steps):
+    num_infect = N_P_avg[i] + N_A_avg[i] + N_Y_avg[i]
+    if num_infect > peak_infections:
+        peak_infections = num_infect
+
+
+print(f"Peak infections at a point in time: {peak_infections}")
+
+
