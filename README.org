@@ -15,11 +15,11 @@ Currently, the initial variables, the Monte-Carlo loop, a plot of the result, an
 + pyqt6==6.9.1
 * Setup Instructions
 To run the program, do the following:
-1. Create a virtual environment
+Create a virtual environment
 #+begin_example
 $ python -m venv .venv
 #+end_example
-2. Activate the virtual environment
+Activate the virtual environment
 Windows:
 #+begin_example
 .venv\Scripts\activate
@@ -28,11 +28,11 @@ macOS/Linux:
 #+begin_example
 source .venv/bin/activate
 #+end_example
-3. Install dependencies
+Install dependencies
 #+begin_example
 pip install -r requirements
 #+end_example
-4. Run the simulation
+Run the simulation
 #+begin_example
 python simulation.py
 #+end_example
