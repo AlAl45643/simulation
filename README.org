@@ -1,0 +1,38 @@
+* Project Status
+Currently, the initial variables, the Monte-Carlo loop, a plot of the result, and the peak infections at a point in time metric have been completed. On the other hand, we still need to fit the initial variables to real-world values, complete the rest of the metrics, and modularize the code. Also, there have been no major changes to the initial proposal though the stochastic processes for the model which were left somewhat unclear have now been defined.
+* Dependencies and Versions 
++ contourpy==1.3.3
++ cycler==0.12.1
++ fonttools==4.60.0
++ kiwisolver==1.4.9
++ matplotlib==3.10.6
++ numpy==2.3.3
++ packaging==25.0
++ pillow==11.3.0
++ pyparsing==3.2.4
++ python-dateutil==2.9.0.post0
++ six==1.17.0
++ pyqt6==6.9.1
+* Setup Instructions
+To run the program, do the following:
+1. Create a virtual environment
+#+begin_example
+$ python -m venv .venv
+#+end_example
+2. Activate the virtual environment
+Windows:
+#+begin_example
+.venv\Scripts\activate
+#+end_example
+macOS/Linux:
+#+begin_example
+source .venv/bin/activate
+#+end_example
+3. Install dependencies
+#+begin_example
+pip install -r requirements
+#+end_example
+4. Run the simulation
+#+begin_example
+python simulation.py
+#+end_example
