@@ -1,28 +1,28 @@
 import numpy as np
 import matplotlib.pyplot as plt
-np.random.seed(150)
+np.random.seed(432)
 
 N_S0 = 500
-s = 0.7
+s = 0.2
 
 N_P0 = 1
-p = 0.7
+p = 0.2
 p_kappa = 0.2
 p_theta = 0.7
 
 N_A0 = 1
-a = 0.7
-a_kappa = 0.1
+a = 0.2
+a_kappa = 0.2
 a_theta = 0.3
 
 N_Y0 = 1
-y = 0.9
-y_kappa = 0.3
+y = 0.3
+y_kappa = 0.4
 
 N_R0 = 0
 
-beta = 1.5
-gamma = 0.2
+beta = 3.5
+gamma = 0.3
 phi = 0.3
 
 total = N_S0 + N_P0 + N_A0 + N_Y0
