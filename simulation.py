@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.stats as stats
+import sys
 
-def simulation(time: list, N_S: list, N_P: list, N_A: list, N_Y: list, N_R: list, s: float, p: float, a: float, y: float, p_theta: float, a_theta: float, p_kappa: float, a_kappa: float, y_kappa: float, total: float, gamma: float, beta: float, phi: float, steps: int, cycles: int):
+
+def simulation(time, N_S, N_P, N_A, N_Y, N_R, s, p, a, y, p_theta, a_theta, p_kappa, a_kappa, y_kappa, total, gamma, beta, phi, steps, cycles):
     for i in range(cycles):
         for j in range(steps):
             S_rate = N_S[i, j] / total
@@ -82,7 +85,7 @@ def simulation(time: list, N_S: list, N_P: list, N_A: list, N_Y: list, N_R: list
                 N_R[i, j+1] = N_R[i, j] + 1
 
 
-def get_average(time: list, N_S0: int, N_P0: int, N_A0: int, N_Y0: int, N_R0: int, N_S: list, N_P: list, N_A: list, N_Y: list, N_R: list, avg_steps: int, cycles: int, steps: int) -> (list, list, list, list, list, list):
+def get_average(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S, N_P, N_A, N_Y, N_R, avg_steps, cycles, steps, conf_level):
     time_max = time.max()
     Time_avg = np.linspace(0, time_max, avg_steps)
     N_S_avg = np.zeros(avg_steps)
@@ -90,6 +93,12 @@ def get_average(time: list, N_S0: int, N_P0: int, N_A0: int, N_Y0: int, N_R0: in
     N_A_avg = np.zeros(avg_steps)
     N_Y_avg = np.zeros(avg_steps)
     N_R_avg = np.zeros(avg_steps)
+
+    N_S_conf = np.zeros(avg_steps, dtype=object)
+    N_P_conf = np.zeros(avg_steps, dtype=object)
+    N_A_conf = np.zeros(avg_steps, dtype=object)
+    N_Y_conf = np.zeros(avg_steps, dtype=object)
+    N_R_conf = np.zeros(avg_steps, dtype=object)
 
     N_S_avg[0] = N_S0
     N_P_avg[0] = N_P0
@@ -99,56 +108,90 @@ def get_average(time: list, N_S0: int, N_P0: int, N_A0: int, N_Y0: int, N_R0: in
 
     for i in range(0, avg_steps):
         time_max = Time_avg[i]
-        S_sum = 0
-        P_sum = 0
-        A_sum = 0
-        Y_sum = 0
-        R_sum = 0
-        t_count = 0
+        S_slice = []
+        P_slice = []
+        A_slice = []
+        Y_slice = []
+        R_slice = []
+        total_count = 0
 
         for j in range(cycles):
+            S_sum = 0
+            P_sum = 0
+            A_sum = 0
+            Y_sum = 0
+            R_sum = 0
+            step_count = 0
+
             for k in range(steps):
                 if time[j, k] <= time_max and time[j, k + 1] > time_max:
-                    t_count += 1
+                    step_count += 1
+                    total_count += 1
                     S_sum += N_S[j, k]
                     P_sum += N_P[j, k]
                     A_sum += N_A[j, k]
                     Y_sum += N_Y[j, k]
                     R_sum += N_R[j, k]
 
-            if t_count == 0:
-                N_S_avg[i] = N_S_avg[i-1]
-                N_P_avg[i] = N_P_avg[i-1]
-                N_A_avg[i] = N_A_avg[i-1]
-                N_Y_avg[i] = N_Y_avg[i-1]
-                N_R_avg[i] = N_R_avg[i-1]
-            else:
-                N_S_avg[i] = S_sum / t_count
-                N_P_avg[i] = P_sum / t_count
-                N_A_avg[i] = A_sum / t_count
-                N_Y_avg[i] = Y_sum / t_count
-                N_R_avg[i] = R_sum / t_count
+            
+            if step_count != 0:
+                S_slice.append(S_sum)
+                P_slice.append(P_sum)
+                A_slice.append(A_sum)
+                Y_slice.append(Y_sum)
+                R_slice.append(R_sum)
 
-    return (Time_avg, N_S_avg, N_P_avg, N_A_avg, N_Y_avg, N_R_avg)
+        if total_count == 0:
+            N_S_avg[i] = N_S_avg[i-1]
+            N_P_avg[i] = N_P_avg[i-1]
+            N_A_avg[i] = N_A_avg[i-1]
+            N_Y_avg[i] = N_Y_avg[i-1]
+            N_R_avg[i] = N_R_avg[i-1]
+
+            N_S_conf[i] = N_S_conf[i-1]
+            N_P_conf[i] = N_P_conf[i-1]
+            N_A_conf[i] = N_A_conf[i-1]
+            N_Y_conf[i] = N_Y_conf[i-1]
+            N_R_conf[i] = N_R_conf[i-1]
+        else:
+            N_S_avg[i] = np.mean(S_slice)
+            N_P_avg[i] = np.mean(P_slice)
+            N_A_avg[i] = np.mean(A_slice)
+            N_Y_avg[i] = np.mean(Y_slice)
+            N_R_avg[i] = np.mean(R_slice)
+
+            N_S_conf[i] = stats.t.interval(conf_level, df=len(
+                S_slice)-1, loc=np.mean(S_slice), scale=np.std(S_slice, ddof=1) / np.sqrt(len(S_slice)))
+            N_P_conf[i] = stats.t.interval(conf_level, df=len(
+                P_slice)-1, loc=np.mean(P_slice), scale=np.std(P_slice, ddof=1) / np.sqrt(len(P_slice)))
+            N_A_conf[i] = stats.t.interval(conf_level, df=len(
+                A_slice)-1, loc=np.mean(A_slice), scale=np.std(A_slice, ddof=1) / np.sqrt(len(A_slice)))
+            N_Y_conf[i] = stats.t.interval(conf_level, df=len(
+                Y_slice)-1, loc=np.mean(Y_slice), scale=np.std(Y_slice, ddof=1) / np.sqrt(len(Y_slice)))
+            N_R_conf[i] = stats.t.interval(conf_level, df=len(
+                R_slice)-1, loc=np.mean(R_slice), scale=np.std(R_slice, ddof=1) / np.sqrt(len(R_slice)))
 
 
-def visualizer(Time_avg: list, N_S_avg: list, N_P_avg: list, N_A_avg: list, N_Y_avg: list, N_R_avg: list, plot_name):
+    return (Time_avg, (N_S_avg, N_S_conf), (N_P_avg, N_P_conf), (N_A_avg, N_A_conf), (N_Y_avg, N_Y_conf), (N_R_avg, N_R_conf))
+
+
+def visualizer(Time_avg, N_S_res, N_P_res, N_A_res, N_Y_res, N_R_res, plot_name):
     plt.ylabel("Population")
     plt.xlabel("time")
 
-    plt.plot(Time_avg, N_S_avg, marker="",
+    plt.plot(Time_avg, N_S_res[0], marker="",
              color="red", linewidth=1.9, alpha=0.9)
 
-    plt.plot(Time_avg, N_P_avg, marker="",
+    plt.plot(Time_avg, N_P_res[0], marker="",
              color="blue", linewidth=1.9, alpha=0.9)
 
-    plt.plot(Time_avg, N_A_avg, marker="",
+    plt.plot(Time_avg, N_A_res[0], marker="",
              color="orange", linewidth=1.9, alpha=0.9)
 
-    plt.plot(Time_avg, N_Y_avg, marker="",
+    plt.plot(Time_avg, N_Y_res[0], marker="",
              color="yellow", linewidth=1.9, alpha=0.9)
 
-    plt.plot(Time_avg, N_R_avg, marker="",
+    plt.plot(Time_avg, N_R_res[0], marker="",
              color="pink", linewidth=1.9, alpha=0.9)
 
     plt.legend(["Susceptible",
@@ -157,7 +200,7 @@ def visualizer(Time_avg: list, N_S_avg: list, N_P_avg: list, N_A_avg: list, N_Y_
     plt.savefig(plot_name)
 
 
-def data_collector(N_P_avg: list, N_A_avg: list, N_Y_avg: list, avg_steps):
+def data_collector(N_P_avg, N_A_avg, N_Y_avg, avg_steps):
     # Peak number of infections at a time
     peak_infections = 0
     for i in range(0, avg_steps):
@@ -189,6 +232,7 @@ def main():
     phi = 0.3
     steps = 1500
     cycles = 50
+    conf_level = 0.95
 
     time = np.zeros((cycles, steps+1))
     N_S = np.zeros((cycles, steps+1))
@@ -205,14 +249,14 @@ def main():
 
     simulation(time, N_S, N_P, N_A, N_Y, N_R, s, p, a, y, p_theta, a_theta,
                p_kappa, a_kappa, y_kappa, total, gamma, beta, phi, steps, cycles)
-
+    
     avg_steps = 50
-    Time_avg, N_S_avg, N_P_avg, N_A_avg, N_Y_avg, N_R_avg = get_average(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S,
-                                                                        N_P, N_A, N_Y, N_R, avg_steps, cycles, steps)
+    Time_avg, N_S_res, N_P_res, N_A_res, N_Y_res, N_R_res = get_average(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S,
+                                                                        N_P, N_A, N_Y, N_R, avg_steps, cycles, steps, conf_level)
 
-    visualizer(Time_avg, N_S_avg, N_P_avg, N_A_avg,
-               N_Y_avg, N_R_avg, "plot.png")
-    data_collector(N_P_avg, N_A_avg, N_Y_avg, avg_steps)
+    # visualizer(Time_avg, N_S_res, N_P_res, N_A_res,
+               # N_Y_res, N_R_res, "plot.png")
+    # data_collector(N_P_avg, N_A_avg, N_Y_avg, avg_steps)
 
 
 if __name__ == '__main__':
