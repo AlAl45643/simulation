@@ -85,7 +85,25 @@ def simulation(time, N_S, N_P, N_A, N_Y, N_R, s, p, a, y, p_theta, a_theta, p_ka
                 N_R[i, j+1] = N_R[i, j] + 1
 
 
-def get_average(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S, N_P, N_A, N_Y, N_R, avg_steps, cycles, steps, conf_level):
+def clean_up_conf(confs, avgs):
+    lower_conf = []
+    higher_conf = []
+    for idx, conf in enumerate(confs):
+        if np.isnan(conf[0]):
+            lower_conf.append(avgs[idx])
+        else:
+            lower_conf.append(conf[0])
+
+    for idx, conf in enumerate(confs):
+        if np.isnan(conf[1]):
+            higher_conf.append(avgs[idx])
+        else:
+            higher_conf.append(conf[1])
+
+    return (lower_conf, higher_conf)
+
+
+def get_avg_and_conf(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S, N_P, N_A, N_Y, N_R, avg_steps, cycles, steps, conf_level):
     time_max = time.max()
     Time_avg = np.linspace(0, time_max, avg_steps)
     N_S_avg = np.zeros(avg_steps)
@@ -133,7 +151,6 @@ def get_average(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S, N_P, N_A, N_Y, N_R, avg
                     Y_sum += N_Y[j, k]
                     R_sum += N_R[j, k]
 
-            
             if step_count != 0:
                 S_slice.append(S_sum)
                 P_slice.append(P_sum)
@@ -171,31 +188,32 @@ def get_average(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S, N_P, N_A, N_Y, N_R, avg
             N_R_conf[i] = stats.t.interval(conf_level, df=len(
                 R_slice)-1, loc=np.mean(R_slice), scale=np.std(R_slice, ddof=1) / np.sqrt(len(R_slice)))
 
+    N_S_lower_conf, N_S_higher_conf = clean_up_conf(N_S_conf, N_S_avg)
+    N_P_lower_conf, N_P_higher_conf = clean_up_conf(N_P_conf, N_P_avg)
+    N_A_lower_conf, N_A_higher_conf = clean_up_conf(N_A_conf, N_A_avg)
+    N_Y_lower_conf, N_Y_higher_conf = clean_up_conf(N_Y_conf, N_Y_avg)
+    N_R_lower_conf, N_R_higher_conf = clean_up_conf(N_R_conf, N_R_avg)
 
-    return (Time_avg, (N_S_avg, N_S_conf), (N_P_avg, N_P_conf), (N_A_avg, N_A_conf), (N_Y_avg, N_Y_conf), (N_R_avg, N_R_conf))
+    return (Time_avg, (N_S_avg, N_S_lower_conf, N_S_higher_conf), (N_P_avg, N_P_lower_conf, N_P_higher_conf), (N_A_avg, N_A_lower_conf, N_A_higher_conf), (N_Y_avg, N_Y_lower_conf, N_Y_higher_conf), (N_R_avg, N_R_lower_conf, N_R_higher_conf))
+
+
+def plot_avg_confs(axs, title, x, y, low_conf_y, high_conf_y, color):
+    axs.set_title(title)
+    axs.plot(x, y, marker="", color=color, linewidth=0.5, alpha=0.9)
+    axs.plot(x, low_conf_y, marker="", color="black", linewidth=0.5, alpha=0.5)
+    axs.plot(x, high_conf_y, marker="", color="black", linewidth=0.5, alpha=0.5)
 
 
 def visualizer(Time_avg, N_S_res, N_P_res, N_A_res, N_Y_res, N_R_res, plot_name):
     plt.ylabel("Population")
     plt.xlabel("time")
 
-    plt.plot(Time_avg, N_S_res[0], marker="",
-             color="red", linewidth=1.9, alpha=0.9)
-
-    plt.plot(Time_avg, N_P_res[0], marker="",
-             color="blue", linewidth=1.9, alpha=0.9)
-
-    plt.plot(Time_avg, N_A_res[0], marker="",
-             color="orange", linewidth=1.9, alpha=0.9)
-
-    plt.plot(Time_avg, N_Y_res[0], marker="",
-             color="yellow", linewidth=1.9, alpha=0.9)
-
-    plt.plot(Time_avg, N_R_res[0], marker="",
-             color="pink", linewidth=1.9, alpha=0.9)
-
-    plt.legend(["Susceptible",
-                "Pre-symptomatic", "Asymptomatic", "Symptomatic", "Recovered"])
+    fig, axs = plt.subplots(5, 1, figsize=(5, 20))
+    plot_avg_confs(axs[0], "Susceptible", Time_avg, N_S_res[0], N_S_res[1], N_S_res[2], "red")
+    plot_avg_confs(axs[1], "Pre-symptomatic", Time_avg, N_P_res[0], N_P_res[1], N_P_res[2], "blue")
+    plot_avg_confs(axs[2], "Asymptomatic", Time_avg, N_A_res[0], N_A_res[1], N_A_res[2], "orange")
+    plot_avg_confs(axs[3], "Symptomatic", Time_avg, N_Y_res[0], N_Y_res[1], N_Y_res[2], "yellow")
+    plot_avg_confs(axs[4], "Recovered", Time_avg, N_R_res[0], N_R_res[1], N_R_res[2], "pink")
 
     plt.savefig(plot_name)
 
@@ -230,7 +248,7 @@ def main():
     beta = 1.5
     gamma = 0.2
     phi = 0.3
-    steps = 1500
+    steps = 1400
     cycles = 50
     conf_level = 0.95
 
@@ -249,13 +267,13 @@ def main():
 
     simulation(time, N_S, N_P, N_A, N_Y, N_R, s, p, a, y, p_theta, a_theta,
                p_kappa, a_kappa, y_kappa, total, gamma, beta, phi, steps, cycles)
-    
-    avg_steps = 50
-    Time_avg, N_S_res, N_P_res, N_A_res, N_Y_res, N_R_res = get_average(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S,
-                                                                        N_P, N_A, N_Y, N_R, avg_steps, cycles, steps, conf_level)
 
-    # visualizer(Time_avg, N_S_res, N_P_res, N_A_res,
-               # N_Y_res, N_R_res, "plot.png")
+    avg_steps = 50
+    Time_avg, N_S_res, N_P_res, N_A_res, N_Y_res, N_R_res = get_avg_and_conf(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S,
+                                                                             N_P, N_A, N_Y, N_R, avg_steps, cycles, steps, conf_level)
+
+    visualizer(Time_avg, N_S_res, N_P_res, N_A_res,
+               N_Y_res, N_R_res, "plot.png")
     # data_collector(N_P_avg, N_A_avg, N_Y_avg, avg_steps)
 
 
