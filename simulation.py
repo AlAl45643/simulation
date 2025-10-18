@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
-import sys
 
 
 def simulation(time, N_S, N_P, N_A, N_Y, N_R, s, p, a, y, p_theta, a_theta, p_kappa, a_kappa, y_kappa, total, gamma, beta, phi, steps, cycles):
@@ -200,55 +199,71 @@ def get_avg_and_conf(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S, N_P, N_A, N_Y, N_R
 def plot_avg_confs(axs, title, x, y, low_conf_y, high_conf_y, color):
     axs.set_title(title)
     axs.plot(x, y, marker="", color=color, linewidth=0.5, alpha=0.9)
-    axs.plot(x, low_conf_y, marker="", color="black", linewidth=0.5, alpha=0.5)
-    axs.plot(x, high_conf_y, marker="", color="black", linewidth=0.5, alpha=0.5)
+    axs.plot(x, low_conf_y, marker=".",
+             color="black", linewidth=0.5, alpha=0.5)
+    axs.plot(x, high_conf_y, marker=".",
+             color="black", linewidth=0.5, alpha=0.5)
+    axs.set_xlim(0, max(x))
 
 
 def visualizer(Time_avg, N_S_res, N_P_res, N_A_res, N_Y_res, N_R_res, plot_name):
     plt.ylabel("Population")
     plt.xlabel("time")
 
-    fig, axs = plt.subplots(5, 1, figsize=(5, 20))
-    plot_avg_confs(axs[0], "Susceptible", Time_avg, N_S_res[0], N_S_res[1], N_S_res[2], "red")
-    plot_avg_confs(axs[1], "Pre-symptomatic", Time_avg, N_P_res[0], N_P_res[1], N_P_res[2], "blue")
-    plot_avg_confs(axs[2], "Asymptomatic", Time_avg, N_A_res[0], N_A_res[1], N_A_res[2], "orange")
-    plot_avg_confs(axs[3], "Symptomatic", Time_avg, N_Y_res[0], N_Y_res[1], N_Y_res[2], "yellow")
-    plot_avg_confs(axs[4], "Recovered", Time_avg, N_R_res[0], N_R_res[1], N_R_res[2], "pink")
+    fig, axs = plt.subplots(5, 1, figsize=(6, 20))
+    plot_avg_confs(axs[0], "Susceptible", Time_avg,
+                   N_S_res[0], N_S_res[1], N_S_res[2], "red")
+    plot_avg_confs(axs[1], "Pre-symptomatic", Time_avg,
+                   N_P_res[0], N_P_res[1], N_P_res[2], "blue")
+    plot_avg_confs(axs[2], "Asymptomatic", Time_avg,
+                   N_A_res[0], N_A_res[1], N_A_res[2], "orange")
+    plot_avg_confs(axs[3], "Symptomatic", Time_avg,
+                   N_Y_res[0], N_Y_res[1], N_Y_res[2], "yellow")
+    plot_avg_confs(axs[4], "Recovered", Time_avg,
+                   N_R_res[0], N_R_res[1], N_R_res[2], "pink")
 
     plt.savefig(plot_name)
 
 
-def data_collector(N_P_avg, N_A_avg, N_Y_avg, avg_steps):
+def data_collector(Time_avg, N_S_avg, N_P_avg, p_kappa, p_theta, N_A_avg, a_kappa, a_theta, N_Y_avg, N_R_avg, y_kappa, avg_steps, s, p, a, y, gamma, beta, phi, total):
     # Peak number of infections at a time
+    # Time to peak metric
     peak_infections = 0
+    peak_time = 0
     for i in range(0, avg_steps):
         num_infect = N_P_avg[i] + N_A_avg[i] + N_Y_avg[i]
         if num_infect > peak_infections:
             peak_infections = num_infect
-    print(peak_infections)
+            peak_time = Time_avg[i]
+
+    R0 = ((p_kappa * p + a_kappa * a + y_kappa * y) * beta) / \
+        ((p_theta * (gamma + phi)) + (a_theta * (gamma)))
+
+    attack_rate = N_R_avg[len(N_R_avg) - 1] / N_S_avg[0]
+    return (peak_infections, peak_time, R0, attack_rate)
 
 
 def main():
     np.random.seed = 312342
-    N_S0 = 500
+    N_S0 = 5000
     N_P0 = 1
     N_A0 = 1
     N_Y0 = 1
     N_R0 = 0
     total = N_S0 + N_P0 + N_A0 + N_Y0 + N_R0
-    s = 0.7
+    s = 1.0 
     p = 0.7
     a = 0.7
-    y = 0.9
-    p_kappa = 0.2
+    y = 0.7
+    p_kappa = 0.7
     a_kappa = 0.7
-    y_kappa = 0.9
-    p_theta = 0.7
-    a_theta = 0.3
-    beta = 1.5
+    y_kappa = 0.7
+    p_theta = 0.8
+    a_theta = 0.2
+    beta = 1.0
     gamma = 0.2
     phi = 0.3
-    steps = 1400
+    steps = 19000
     cycles = 50
     conf_level = 0.95
 
@@ -274,7 +289,9 @@ def main():
 
     visualizer(Time_avg, N_S_res, N_P_res, N_A_res,
                N_Y_res, N_R_res, "plot.png")
-    # data_collector(N_P_avg, N_A_avg, N_Y_avg, avg_steps)
+    res = data_collector(
+        Time_avg, N_S_res[0], N_P_res[0], p_kappa, p_theta, N_A_res[0], a_kappa, a_theta, N_Y_res[0], N_R_res[0], y_kappa, avg_steps, s, p, a, y, gamma, beta, phi, total)
+    print(res)
 
 
 if __name__ == '__main__':
