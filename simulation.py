@@ -1,11 +1,26 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import sys
+np.set_printoptions(threshold=sys.maxsize)
+
+
+def resize_np_array(array):
+    pad_size = (int((array.shape[1] - 1) * 2))
+    return np.pad(array, ((0, 0), (0, (pad_size))), 'constant', constant_values=0)
 
 
 def simulation(time, N_S, N_P, N_A, N_Y, N_R, s, p, a, y, p_theta, a_theta, p_kappa, a_kappa, y_kappa, total, gamma, beta, phi, steps, cycles):
     for i in range(cycles):
-        for j in range(steps):
+        j = 0
+        while N_P[i, j] + N_Y[i, j] + N_A[i, j] != 0:
+            if j > N_S.shape[1] - 2:
+                N_S = resize_np_array(N_S)
+                N_P = resize_np_array(N_P)
+                N_A = resize_np_array(N_A)
+                N_Y = resize_np_array(N_Y)
+                N_R = resize_np_array(N_R)
+                time = resize_np_array(time)
             S_rate = N_S[i, j] / total
             P_rate = N_P[i, j] / total
             A_rate = N_A[i, j] / total
@@ -82,6 +97,8 @@ def simulation(time, N_S, N_P, N_A, N_Y, N_R, s, p, a, y, p_theta, a_theta, p_ka
                 N_A[i, j+1] = N_A[i, j]
                 N_Y[i, j+1] = N_Y[i, j] - 1
                 N_R[i, j+1] = N_R[i, j] + 1
+            j += 1
+    return (N_S, N_P, N_A, N_Y, N_R, time)
 
 
 def clean_up_conf(confs, avgs):
@@ -140,7 +157,7 @@ def get_avg_and_conf(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S, N_P, N_A, N_Y, N_R
             R_sum = 0
             step_count = 0
 
-            for k in range(steps):
+            for k in range(N_S.shape[1] - 1):
                 if time[j, k] <= time_max and time[j, k + 1] > time_max:
                     step_count += 1
                     total_count += 1
@@ -251,19 +268,19 @@ def main():
     N_Y0 = 1
     N_R0 = 0
     total = N_S0 + N_P0 + N_A0 + N_Y0 + N_R0
-    s = 1.0 
-    p = 0.7
-    a = 0.7
-    y = 0.7
-    p_kappa = 0.7
-    a_kappa = 0.7
-    y_kappa = 0.7
+    s = 1.0
+    p = 0.1
+    a = 0.1
+    y = 0.1
+    p_kappa = 0.1
+    a_kappa = 0.1
+    y_kappa = 0.1
     p_theta = 0.8
     a_theta = 0.2
     beta = 1.0
     gamma = 0.2
     phi = 0.3
-    steps = 19000
+    steps = 10
     cycles = 50
     conf_level = 0.95
 
@@ -280,18 +297,18 @@ def main():
     N_Y[:, 0] = N_Y0
     N_R[:, 0] = N_R0
 
-    simulation(time, N_S, N_P, N_A, N_Y, N_R, s, p, a, y, p_theta, a_theta,
-               p_kappa, a_kappa, y_kappa, total, gamma, beta, phi, steps, cycles)
+    N_S, N_P, N_A, N_Y, N_R, time = simulation(time, N_S, N_P, N_A, N_Y, N_R, s, p, a, y, p_theta, a_theta,
+                                               p_kappa, a_kappa, y_kappa, total, gamma, beta, phi, steps, cycles)
 
     avg_steps = 50
     Time_avg, N_S_res, N_P_res, N_A_res, N_Y_res, N_R_res = get_avg_and_conf(time, N_S0, N_P0, N_A0, N_Y0, N_R0, N_S,
-                                                                             N_P, N_A, N_Y, N_R, avg_steps, cycles, steps, conf_level)
+                                                                             N_P, N_A, N_Y, N_R, avg_steps, cycles, 200, conf_level)
 
     visualizer(Time_avg, N_S_res, N_P_res, N_A_res,
                N_Y_res, N_R_res, "plot.png")
     res = data_collector(
         Time_avg, N_S_res[0], N_P_res[0], p_kappa, p_theta, N_A_res[0], a_kappa, a_theta, N_Y_res[0], N_R_res[0], y_kappa, avg_steps, s, p, a, y, gamma, beta, phi, total)
-    print(res)
+    print(res, N_S.shape[1])
 
 
 if __name__ == '__main__':
