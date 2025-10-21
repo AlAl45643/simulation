@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
+import pandas as pd
 import sys
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -243,8 +244,6 @@ def visualizer(Time_avg, N_S_res, N_P_res, N_A_res, N_Y_res, N_R_res, plot_name)
 
 
 def data_collector(Time_avg, N_S_avg, N_P_avg, p_kappa, p_theta, N_A_avg, a_kappa, a_theta, N_Y_avg, N_R_avg, y_kappa, avg_steps, s, p, a, y, gamma, beta, phi, total):
-    # Peak number of infections at a time
-    # Time to peak metric
     peak_infections = 0
     peak_time = 0
     for i in range(0, avg_steps):
@@ -257,27 +256,35 @@ def data_collector(Time_avg, N_S_avg, N_P_avg, p_kappa, p_theta, N_A_avg, a_kapp
         ((p_theta * (gamma + phi)) + (a_theta * (gamma)))
 
     attack_rate = N_R_avg[len(N_R_avg) - 1] / N_S_avg[0]
-    return (peak_infections, peak_time, R0, attack_rate)
+    return (("peak_infections", peak_infections), ("peak_time", peak_time), ("R0", R0), ("attack_rate", attack_rate))
+
+
+def export_csv(metrics_name, metrics, *arrays):
+    metrics_df = pd.DataFrame(metrics)
+    metrics_df.to_csv(metrics_name)
+    for array in arrays:
+        array_df = pd.DataFrame(array[0])
+        array_df.to_csv(array[1])
 
 
 def main():
     np.random.seed = 312342
     N_S0 = 5000
     N_P0 = 1
-    N_A0 = 1
-    N_Y0 = 1
+    N_A0 = 0
+    N_Y0 = 0
     N_R0 = 0
     total = N_S0 + N_P0 + N_A0 + N_Y0 + N_R0
-    s = 1.0
-    p = 0.1
-    a = 0.1
-    y = 0.1
-    p_kappa = 0.1
-    a_kappa = 0.1
-    y_kappa = 0.1
+    s = 0.5
+    p = 0.7
+    a = 0.7
+    y = 0.7
+    p_kappa = 0.7
+    a_kappa = 0.7
+    y_kappa = 0.7
     p_theta = 0.8
     a_theta = 0.2
-    beta = 1.0
+    beta = 0.6
     gamma = 0.2
     phi = 0.3
     steps = 10
@@ -306,9 +313,10 @@ def main():
 
     visualizer(Time_avg, N_S_res, N_P_res, N_A_res,
                N_Y_res, N_R_res, "plot.png")
-    res = data_collector(
+    metrics = data_collector(
         Time_avg, N_S_res[0], N_P_res[0], p_kappa, p_theta, N_A_res[0], a_kappa, a_theta, N_Y_res[0], N_R_res[0], y_kappa, avg_steps, s, p, a, y, gamma, beta, phi, total)
-    print(res, N_S.shape[1])
+    export_csv("metrics.csv", metrics, (N_S, "N_S.csv"), (N_P, "N_P.csv"),
+               (N_A, "N_A.csv"), (N_Y, "N_Y.csv"), (N_R, "N_R.csv"))
 
 
 if __name__ == '__main__':
