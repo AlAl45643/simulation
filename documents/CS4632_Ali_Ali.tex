@@ -66,7 +66,7 @@ The above model is derived from the standard SIR model. The Infectious component
 \subsection{System Dynamics}
 \[
   \scalebox{2}{
-  $S^' = - \frac{s(p + a + y)}{T} \beta S (\kappa _1 P + \kappa _2 A + \kappa _3 Y )$}
+  $S^' = - \frac{s(p + a + y)}{T} \beta S (\kappa _1 P + \kappa _2 A + \kappa _3 Y)$}
 \]
 
 \[
@@ -83,13 +83,13 @@ The above model is derived from the standard SIR model. The Infectious component
 
 \[
   \scalebox{2}{$
-    Y^' = \phi P - \gamma Y
+    Y^' = \phi P - \zeta Y
   $}
 \]
 
 \[
   \scalebox{2}{$
-    R^' = \gamma Y + \gamma A
+    R^' = \zeta Y + \gamma A
   $}
 \]
 \begin{center}
@@ -111,7 +111,9 @@ The above model is derived from the standard SIR model. The Infectious component
   \hline
   $\phi$ & rate of pre-symptomatic to symptomatic \\
   \hline
-  $\gamma$ & rate of recovery \\
+  $\gamma$ & rate of asymptomatic to recovered \\
+  \hline
+  $\zeta$ & rate of symptomatic to recovered \\
   \hline
 \end{tabular}
 \end{center}
