@@ -104,6 +104,7 @@ class Simulation:
                     self.N_A[i, j+1:] = self.N_A[i, j]
                     self.N_Y[i, j+1:] = self.N_Y[i, j]
                     self.N_R[i, j+1:] = self.N_R[i, j]
+                    self.time[i, j+1:] = self.time[i, j]
                     break
 
                 u1 = np.random.random()
@@ -300,7 +301,7 @@ class Simulation:
         attack_rate = N_R_avg[len(N_R_avg) - 1] / N_S_avg[0]
         return (("peak_infections", peak_infections), ("peak_time", peak_time), ("R0", R0), ("attack_rate", attack_rate))
 
-    def export_data(self, plot_file_name, metrics_file_name, N_S_name, N_P_name, N_A_name, N_Y_name, N_R_name):
+    def export_data(self, plot_file_name, metrics_file_name, N_S_name, N_P_name, N_A_name, N_Y_name, N_R_name, time_name):
         Time_avg, N_S_res, N_P_res, N_A_res, N_Y_res, N_R_res = self.__get_avg_and_conf()
         self.__visualizer(Time_avg, N_S_res, N_P_res, N_A_res,
                           N_Y_res, N_R_res, plot_file_name)
@@ -318,13 +319,16 @@ class Simulation:
         N_Y_df.to_csv(N_Y_name)
         N_R_df = pd.DataFrame(self.N_R)
         N_R_df.to_csv(N_R_name)
+        time_df = pd.DataFrame(self.time)
+        time_df.to_csv(time_name)
 
 
-def main(seed, N_S0, N_P0, N_A0, N_Y0, N_R0, s, p, a, y, cycles, avg_steps, plot_name, metrics_name, N_S_name, N_P_name, N_A_name, N_Y_name, N_R_name):
-    simulation = Simulation(seed, N_S0, N_P0, N_A0, N_Y0, N_R0, s, p, a, y, cycles, avg_steps)
+def main(seed, N_S0, N_P0, N_A0, N_Y0, N_R0, s, p, a, y, cycles, avg_steps, plot_name, metrics_name, N_S_name, N_P_name, N_A_name, N_Y_name, N_R_name, time_name):
+    simulation = Simulation(seed, N_S0, N_P0, N_A0, N_Y0,
+                            N_R0, s, p, a, y, cycles, avg_steps)
     simulation.simulation()
-    simulation.export_data("plot1.png", "metrics.csv",
-                           "N_S.csv", "N_P.csv", "N_A.csv", "N_Y.csv", "N_R.csv")
+    simulation.export_data(plot_name, metrics_name,
+                           N_S_name, N_P_name, N_A_name, N_Y_name, N_R_name, time_name)
 
 
 if __name__ == '__main__':
@@ -372,7 +376,9 @@ if __name__ == '__main__':
                         help="Symptomatic array csv file name to output")
     parser.add_argument("N_R_name", type=str,
                         help="Recovered array csv file name to output")
+    parser.add_argument("time_name", type=str,
+                        help="Time array csv file name to output")
 
     args = parser.parse_args()
     main(args.seed, args.N_S0, args.N_P0, args.N_A0, args.N_Y0, args.N_R0, args.s, args.p, args.a, args.y, args.cycles, args.avg_steps,
-         args.plot_name, args.metrics_name, args.N_S_name, args.N_P_name, args.N_A_name, args.N_Y_name, args.N_R_name)
+         args.plot_name, args.metrics_name, args.N_S_name, args.N_P_name, args.N_A_name, args.N_Y_name, args.N_R_name, args.time_name)
