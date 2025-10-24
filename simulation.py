@@ -445,31 +445,31 @@ if __name__ == '__main__':
         description="Simulate the effect of behavioral changes on the COVID-19 epidemic.")
 
     parser.add_argument(
-        "seed", type=int, help="value used to initialize random number generator")
+        "-seed", type=int, help="value used to initialize random number generator", default=123432)
     parser.add_argument(
-        "N_S0", type=int, help="initial amount of susceptible population")
+        "-N_S0", type=int, help="initial amount of susceptible population", default=5000)
     parser.add_argument(
-        "N_P0", type=int, help="initial amount of pre-symptomatic population")
+        "-N_P0", type=int, help="initial amount of pre-symptomatic population", default=1)
     parser.add_argument(
-        "N_A0", type=int, help="initial amount of asymptomatic population")
+        "-N_A0", type=int, help="initial amount of asymptomatic population", default=0)
     parser.add_argument(
-        "N_Y0", type=int, help="initial amount of symptomatic population")
+        "-N_Y0", type=int, help="initial amount of symptomatic population", default=0)
     parser.add_argument(
-        "N_R0", type=int, help="initial amount of recoverd population")
+        "-N_R0", type=int, help="initial amount of recoverd population", default=0)
 
     parser.add_argument(
-        "s", type=float, help="the fraction of contact that susceptible members will reduce")
+        "-s", type=float, help="the fraction of contact that susceptible members will reduce", default=1.0)
     parser.add_argument(
-        "p", type=float, help="the fraction of contact that pre-symptomatic members will reduce")
+        "-p", type=float, help="the fraction of contact that pre-symptomatic members will reduce", default=1.0)
     parser.add_argument(
-        "a", type=float, help="the fraction of contact that asymptomatic members will reduce")
+        "-a", type=float, help="the fraction of contact that asymptomatic members will reduce", default=1.0)
     parser.add_argument(
-        "y", type=float, help="the fraction of contact that symptomatic members will reduce")
+        "-y", type=float, help="the fraction of contact that symptomatic members will reduce", default=1.0)
 
-    parser.add_argument("cycles", type=int,
-                        help="the number of cycles the simulation will run")
-    parser.add_argument("avg_steps", type=int,
-                        help="the number of equally distant in time averages we will be computing over the simulation time")
+    parser.add_argument("-cycles", type=int,
+                        help="the number of cycles the simulation will run", default=50)
+    parser.add_argument("-avg_steps", type=int,
+                        help="the number of equally distant in time averages we will be computing over the simulation time", default=50)
 
     parser.add_argument("plot_name", type=str, help="plot file name to output")
     parser.add_argument("metrics_name", type=str,
