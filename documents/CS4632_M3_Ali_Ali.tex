@@ -14,7 +14,8 @@
 \maketitle
 \section{Implementation Summary}
 \subsection{Overview of Current Implementation}
-The current implementation's functionality is mostly finished except some refinement may be needed with the calculation of confidence ranges, the calculation of R0, the literature values to set, and which mathematical variables should be exposed to the user. Furthermore, omments documenting variables and methods
+The current implementation's functionality is mostly finished except some refinement may be needed with the calculation of confidence ranges, the calculation of R0, the literature values to set, and which mathematical variables should be exposed to the user. Furthermore, comments documenting variables and methods have been added.
+\begin{itemize}
 \item Added command line parameters with error handling
 \item Implemented CSV export of time-series data and metrics
 \item Altered the number of steps of the simulation to increase until it reaches a steady state
@@ -26,14 +27,14 @@ The following items have not been completed:
 \item Formal sensitivity analysis of parameters
 \end{itemize}
 \subsection{Mathematical Documentation}
-This section has been added in order to provide explantion for the current mathematical implemention.
+This section has been added in order to provide explanation for the current mathematical implementation.
 
 The guiding purpose behind this simulation is to calculate the effect of individual behavioral changes, not government mandated changes, on the spread of COVID-19. How do changes such as going out less, socially distancing from others, self-isolating when sick, and overall reducing contact with others affect a pandemic? This motivation led us to consider the following factors in our model.
 
 \subsubsection{Modeling Behavioral Changes}
 The first is that it is self-evident that a major factor of behavioral changes in a person depends on the status of their infection. Whether or not someone is infected or susceptible to a virus is a major factor influencing their actions.
 
-To model this we can reference a paper called \textit{A simple model for behavior changes in epidemics} which describes a modified SIR model. It assumes that susceptible members during an pandemic decrease their rate of contact by a fraction $p, 0 \le p \le 1$, and that infectious members decrease their rate of contact by a fraction $q, 0 \le q \le 1$. This gives us the current in-progress determinstic model.
+To model this we can reference a paper called \textit{A simple model for behavior changes in epidemics} which describes a modified SIR model. It assumes that susceptible members during an pandemic decrease their rate of contact by a fraction $p, 0 \le p \le 1$, and that infectious members decrease their rate of contact by a fraction $q, 0 \le q \le 1$. This gives us the current in-progress deterministic model.
 \begin{align*}
   & S' = -\beta N \frac{pq}{T}SI           \\
   & I' = \beta N \frac{pq}{T}SI - \gamma I \\
@@ -92,7 +93,7 @@ The conclusion that the status of infection affects the behavioral changes in a 
 \end{tabular}
 \cite{dynamic}
 
-While in the above model contact rate and infection rate are combined, we will separate the general contact rate in our model by putting it outside the paranthesis (replacing beta with kappa). Considering the previous and current conclusions this leads to the current in-progress model:
+While in the above model contact rate and infection rate are combined, we will separate the general contact rate in our model by putting it outside the parenthesis (replacing beta with kappa). Considering the previous and current conclusions this leads to the current in-progress model:
 \begin{align*}
   & S' = - \frac{s(p+a+y)}{T} \beta S (\kappa _1 P + \kappa _2 A + \kappa _3 Y)                     \\
   & P' = \theta _ 1 \frac{s(p+a+y)}{T} \beta S (\kappa _1 P + \kappa _2 A + \kappa _3 Y) - \phi P   \\
@@ -129,7 +130,7 @@ While in the above model contact rate and infection rate are combined, we will s
 
 
 \subsubsection{Modeling as Stochastic Events}
-For this to be a proper model it is required for us to incorporate some stochastic properties. To do this we will first need to convert the determinstic model into an event model by converting the ordinary differential equations into the stochastic model language by following this article. \cite{events}.
+For this to be a proper model it is required for us to incorporate some stochastic properties. To do this we will first need to convert the deterministic model into an event model by converting the ordinary differential equations into the stochastic model language by following this article. \cite{events}.
 
 \begin{center}
   \begin{tabular}{|l | l | l |}
@@ -157,7 +158,7 @@ We will then need to randomly choose each event based on their propensity at a d
 While there has been some refinement compared to the original proposal I do not believe there has been any scope changes in what this project is expected to deliver.
 
 \subsection{Architecture Update}
-Previously, the simulation was contained in global scope without any functions or classes to speak of. Now, the simulation has been modularized within a class called Simulation which can be called through command line arguments. See figure 1 for a more indepth overview.
+Previously, the simulation was contained in global scope without any functions or classes to speak of. Now, the simulation has been modularized within a class called Simulation which can be called through command line arguments. See figure 1 for a more in depth overview.
 
 \begin{figure}[H]
   \includegraphics[scale=0.3]{B-1.png}
@@ -332,34 +333,37 @@ The most interesting runs summary metrics have been collected below.
 \subsubsection{Summary Plot Run 011}
 \includegraphics[scale=0.4]{plot_summary_run_011.png}
 
-\subsection{Initial Obesrvations}
+\subsection{Initial Observations}
 When looking at the summary metrics I observe that the peak time of infection is later the smaller the peak infection is. Also, the attack rate and R0 are clearly correlated. Furthermore, the attack rate struggles to reach a higher value than 95\%.
 \newline
 On the other hand, observing the plots we see that the confidence interval becomes larger the smaller the R0 is. Furthermore, It looks like the confidence interval grows larger the closer we are to the peak, and smaller the farther away we are, though at the end it enlarges which is likely due to most simulations ending before those time points.
-\subsection{Preliminary Results}
+\section{Preliminary Results}
 
 \subsection{Basic Statistics}
 \subsubsection{Run 001 Statistics}
-\subsubsection{Time}
-\begin{tabular}{| l | l | l |}
+Time
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
-  262958 & 65475 & 0.0 & 52191 \\
+  262958 & 65475 & 0 & 52191 \\
   \hline
 \end{tabular} 
 
-\subsubsection{Susceptible}
-\begin{tabular}{| l | l | l |}
+Susceptible
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
-  5000 & 581 & 0.0 & 1028 \\
+  5000 & 581 & 0 & 1028 \\
   \hline
 \end{tabular} 
 
-\subsubsection{Pre-symptomatic}
-\begin{tabular}{| l | l | l |}
+Pre-symptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
@@ -367,8 +371,9 @@ On the other hand, observing the plots we see that the confidence interval becom
   \hline
 \end{tabular} 
 
-\subsubsection{Asymptomatic}
-\begin{tabular}{| l | l | l |}
+Asymptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
@@ -376,8 +381,9 @@ On the other hand, observing the plots we see that the confidence interval becom
   \hline
 \end{tabular} 
 
-\subsubsection{Symptomatic}
-\begin{tabular}{| l | l | l |}
+Symptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
@@ -385,8 +391,9 @@ On the other hand, observing the plots we see that the confidence interval becom
   \hline
 \end{tabular} 
 
-\subsubsection{Recovered}
-\begin{tabular}{| l | l | l |}
+Recovered
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
@@ -394,66 +401,193 @@ On the other hand, observing the plots we see that the confidence interval becom
   \hline
 \end{tabular} 
 \subsubsection{Run 002 Statistics}
-\subsubsection{Time}
-\begin{tabular}{| l | l | l |}
+Time
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
-  262958 & 65475 & 0.0 & 52191 \\
+  287176 & 0 & 0 & 46658 \\
   \hline
 \end{tabular} 
 
-\subsubsection{Susceptible}
-\begin{tabular}{| l | l | l |}
+Susceptible
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
-  5000 & 581 & 0.0 & 1028 \\
+  5000 & 0 & 0 & 775 \\
   \hline
 \end{tabular} 
 
-\subsubsection{Pre-symptomatic}
-\begin{tabular}{| l | l | l |}
+Pre-symptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
-  368 & 63 & 0 & 126 \\
+  125 & 0 & 0 & 28 \\
   \hline
 \end{tabular} 
 
-\subsubsection{Asymptomatic}
-\begin{tabular}{| l | l | l |}
+Asymptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
-  228 & 63 & 0 & 86 \\
+  90 & 0 & 0 & 21 \\
   \hline
 \end{tabular} 
 
-\subsubsection{Symptomatic}
-\begin{tabular}{| l | l | l |}
+Symptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
-  728 & 167 & 0 & 268 \\
+  260 & 0 & 0 & 67 \\
   \hline
 \end{tabular} 
 
-\subsubsection{Recovered}
-\begin{tabular}{| l | l | l |}
+Recovered
+\newline
+\begin{tabular}{| l | l | l | l |}
   \hline\hline
   Range & Median & Mode & Mean \\
   \hline
-  3560 & 249 & 0 & 777 \\
+  1938 & 0 & 0 & 347 \\
   \hline
 \end{tabular} 
 
 \subsubsection{Run 010 Statistics}
+Time
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  272987 & 0 & 0 & 41305 \\
+  \hline
+\end{tabular} 
+
+Susceptible
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  5000 & 0 & 0 & 615 \\
+  \hline
+\end{tabular} 
+
+Pre-symptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  85 & 0 & 0 & 15 \\
+  \hline
+\end{tabular} 
+
+Asymptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  64 & 0 & 0 & 12 \\
+  \hline
+\end{tabular} 
+
+Symptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  169 & 0 & 0 & 37 \\
+  \hline
+\end{tabular} 
+
+Recovered
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  1434 & 0 & 0 & 235 \\
+  \hline
+\end{tabular} 
 
 \subsubsection{Run 011 Statistics}
+Time
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  358112 & 109461 & 0 & 96859 \\
+  \hline
+\end{tabular} 
+
+Susceptible
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  5000 & 1458 & 0 & 1096 \\
+  \hline
+\end{tabular} 
+
+Pre-symptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  37 & 7 & 0 & 7 \\
+  \hline
+\end{tabular} 
+
+Asymptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  31 & 6 & 0 & 6 \\
+  \hline
+\end{tabular} 
+
+Symptomatic
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  62 & 17 & 0 & 19 \\
+  \hline
+\end{tabular} 
+
+Recovered
+\newline
+\begin{tabular}{| l | l | l | l |}
+  \hline\hline
+  Range & Median & Mode & Mean \\
+  \hline
+  709 & 144 & 0 & 216 \\
+  \hline
+\end{tabular} 
+
+\subsection{Performance Observations}
+The range shows that the time of the simulation does not seem to be correlated at least positively with its runtime.
+\subsection{Interesting Patterns Noticed}
+Mode seems to always be zero no matter the input. The median of the results is positive in the sample with the largest R0 and the smallest R0 but not the samples in between.
 
 
 \printbibliography
-
-
 \end{document}
