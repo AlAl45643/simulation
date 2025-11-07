@@ -385,32 +385,50 @@ class Simulation:
 
         plt.savefig(plot_name)
 
-    def __data_collector(self, Time_avg, N_S_avg, N_P_avg, N_A_avg, N_Y_avg, N_R_avg):
-        """Calculate metrics."""
-        # Calculate peak infections and peak time
-        peak_infections = 0
-        peak_time = 0
-        for i in range(0, self.avg_steps):
-            num_infect = N_P_avg[i] + N_A_avg[i] + N_Y_avg[i]
-            if num_infect > peak_infections:
-                peak_infections = num_infect
-                peak_time = Time_avg[i]
 
-        # R0 calculation is based on:
-        # Fred Brauer. “A simple model for behaviour change in epidemics”. In: BMC
-        # Public Health 11.S1 (Feb. 2011). doi: 10.1186/1471-2458-11-s1-s3.
+    def __calculate_stats(self, name, array):
+        "Calculate mean, std, range, and conf on array."
+        mean = np.mean(array)
+        std = np.std(array)
+        range = np.max(array) - np.min(array)
+        conf = stats.t.interval(self.conf_level, df=len(
+            array) - 1, loc=mean, scale=np.std(array, ddof=1) / np.sqrt(len(array)))
+        return (name, mean, std, range, conf)
+
+    def __data_collector(self):
+        """Calculate metrics."""
+        # calculate peak infection and peak time for every cycle
+        peak_infections = []
+        peak_times = []
+        for i in range(self.cycles):
+            peak_infection = 0
+            peak_time = 0
+            length = len(self.N_S[i])
+            for k in range(length - 1):
+                num_infect = self.N_P[i][k] + self.N_A[i][k] + self.N_Y[i][k]
+                if num_infect > peak_infection:
+                    peak_infection = num_infect
+                    peak_time = self.time[i][k]
+            peak_infections.append(peak_infection)
+            peak_times.append(peak_time)
+
+        
         R0 = ((self.p * self.a * self.y) * self.beta) / \
             ((self.p_theta * (self.zeta + self.phi)) + (self.a_theta * (self.gamma)))
 
-        # Calculate attack rate
-        attack_rate = N_R_avg[len(N_R_avg) - 1] / N_S_avg[0]
+        # calculate attack rate for every cycle
+        attack_rates = []
+        for i in range(self.cycles):
+            attack_rate = max(self.N_R[i]) / self.N_S[i][0]
+            attack_rates.append(attack_rate)
 
-        return (("peak_infections", peak_infections), ("peak_time", peak_time), ("R0", R0), ("attack_rate", attack_rate))
+        
+        return (("name", "mean", "std", "range", "conf"), self.__calculate_stats("peak_infections", peak_infections), self.__calculate_stats("peak_times", peak_times), self.__calculate_stats("attack_rates", attack_rates), ("R0",R0, R0, R0, R0))
 
     def __export_to_csv(self, array, name):
         """Export csv of array as name."""
         array_df = pd.DataFrame(array)
-        array_df.to_csv(name)
+        array_df.to_csv(name, index=False)
 
     def export_data(self, plot_file_name, metrics_file_name, N_S_name, N_P_name, N_A_name, N_Y_name, N_R_name, time_name):
         """Export plot and metrics."""
@@ -419,8 +437,7 @@ class Simulation:
         Time_avg, N_S_res, N_P_res, N_A_res, N_Y_res, N_R_res = self.__get_avg_and_conf()
         self.__visualizer(Time_avg, N_S_res, N_P_res, N_A_res,
                           N_Y_res, N_R_res, plot_file_name)
-        metrics = self.__data_collector(
-            Time_avg, N_S_res[0], N_P_res[0], N_A_res[0], N_Y_res[0], N_R_res[0])
+        metrics = self.__data_collector()
 
         self.__export_to_csv(metrics, metrics_file_name)
         self.__export_to_csv(self.N_S, N_S_name)
@@ -438,7 +455,6 @@ def main(seed, N_S0, N_P0, N_A0, N_Y0, N_R0, s, p, a, y, cycles, avg_steps, plot
     simulation.export_data(plot_name, metrics_name,
                            N_S_name, N_P_name, N_A_name, N_Y_name, N_R_name, time_name)
 
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         prog="Behavioral Effect on Covid Simulation",
@@ -449,7 +465,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "-N_S0", type=int, help="initial amount of susceptible population", default=5000)
     parser.add_argument(
-        "-N_P0", type=int, help="initial amount of pre-symptomatic population", default=1)
+        "-N_P0", type=int, help="initial amount of pre-symptomatic population", default=5)
     parser.add_argument(
         "-N_A0", type=int, help="initial amount of asymptomatic population", default=0)
     parser.add_argument(
