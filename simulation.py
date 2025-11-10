@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import scipy.stats as stats
 import pandas as pd
 import argparse
+import math 
 
 
 class Simulation:
@@ -156,6 +157,10 @@ class Simulation:
                     ((self.p_kappa * P_rate) +
                      (self.a_kappa * A_rate) + (self.y_kappa * Y_rate))
 
+                # ensure P is not NaN
+                if math.isnan(P):
+                    P = 0
+
                 # calculate event rate:
                 # S = S - 1
                 # A = A + 1
@@ -174,6 +179,10 @@ class Simulation:
                     * ((self.p_kappa * P_rate) + (self.a_kappa * A_rate)
                        + (self.y_kappa * Y_rate))
 
+                # ensure A is not NaN
+                if math.isnan(A):
+                    A = 0
+
                 # calculate event rate:
                 # P = P - 1
                 # Y = Y + 1
@@ -182,6 +191,7 @@ class Simulation:
                 # P_rate
                 # -    current rate of pre-symptomatic population
                 Y = self.phi * P_rate
+
 
                 # calculate event rate:
                 # A = A - 1
@@ -201,6 +211,7 @@ class Simulation:
                 # -    current rate of symptomatic
                 R_2 = self.zeta * Y_rate
 
+
                 # total event rate
                 event_rate = P + A + Y + R_1 + R_2
 
@@ -217,6 +228,7 @@ class Simulation:
                 u1 = np.random.random()
                 tau = 1/event_rate * np.log(1/u1)
                 self.time[i, j+1] = self.time[i, j] + tau
+
 
                 # randomly choose the event based on the proportion of each event to the total of all events
                 event = np.random.choice(["P", "A", "Y", "R_1", "R_2"], p=[
@@ -385,7 +397,6 @@ class Simulation:
 
         plt.savefig(plot_name)
 
-
     def __calculate_stats(self, name, array):
         "Calculate mean, std, range, and conf on array."
         mean = np.mean(array)
@@ -412,7 +423,6 @@ class Simulation:
             peak_infections.append(peak_infection)
             peak_times.append(peak_time)
 
-        
         R0 = ((self.p * self.a * self.y) * self.beta) / \
             ((self.p_theta * (self.zeta + self.phi)) + (self.a_theta * (self.gamma)))
 
@@ -422,8 +432,7 @@ class Simulation:
             attack_rate = max(self.N_R[i]) / self.N_S[i][0]
             attack_rates.append(attack_rate)
 
-        
-        return (("name", "mean", "std", "range", "conf"), self.__calculate_stats("peak_infections", peak_infections), self.__calculate_stats("peak_times", peak_times), self.__calculate_stats("attack_rates", attack_rates), ("R0",R0, R0, R0, R0))
+        return (("name", "mean", "std", "range", "conf"), self.__calculate_stats("peak_infections", peak_infections), self.__calculate_stats("peak_times", peak_times), self.__calculate_stats("attack_rates", attack_rates), ("R0", R0, R0, R0, R0))
 
     def __export_to_csv(self, array, name):
         """Export csv of array as name."""
@@ -454,6 +463,7 @@ def main(seed, N_S0, N_P0, N_A0, N_Y0, N_R0, s, p, a, y, cycles, avg_steps, plot
     simulation.simulation()
     simulation.export_data(plot_name, metrics_name,
                            N_S_name, N_P_name, N_A_name, N_Y_name, N_R_name, time_name)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -506,3 +516,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     main(args.seed, args.N_S0, args.N_P0, args.N_A0, args.N_Y0, args.N_R0, args.s, args.p, args.a, args.y, args.cycles, args.avg_steps,
          args.plot_name, args.metrics_name, args.N_S_name, args.N_P_name, args.N_A_name, args.N_Y_name, args.N_R_name, args.time_name)
+
