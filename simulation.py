@@ -381,8 +381,6 @@ class Simulation:
 
     def __visualizer(self, Time_avg, N_S_res, N_P_res, N_A_res, N_Y_res, N_R_res, plot_name):
         """Create plot."""
-        plt.ylabel("Population")
-        plt.xlabel("time")
         fig, axs = plt.subplots(5, 1, figsize=(6, 20))
         self.__plot_avg_confs(axs[0], "Susceptible", Time_avg,
                               N_S_res[0], N_S_res[1], N_S_res[2], "red")
@@ -394,7 +392,8 @@ class Simulation:
                               N_Y_res[0], N_Y_res[1], N_Y_res[2], "yellow")
         self.__plot_avg_confs(axs[4], "Recovered", Time_avg,
                               N_R_res[0], N_R_res[1], N_R_res[2], "pink")
-
+        fig.text(0.5, 0.08, 'Time', ha='center', fontsize=25)
+        fig.text(0.01, 0.5, 'Population', va='center', rotation='vertical', fontsize=25)
         plt.savefig(plot_name)
 
     def __calculate_stats(self, name, array):
