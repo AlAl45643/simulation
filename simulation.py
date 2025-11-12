@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import scipy.stats as stats
 import pandas as pd
 import argparse
-import math 
+import math
 
 
 class Simulation:
@@ -192,7 +192,6 @@ class Simulation:
                 # -    current rate of pre-symptomatic population
                 Y = self.phi * P_rate
 
-
                 # calculate event rate:
                 # A = A - 1
                 # R = R + 1
@@ -211,7 +210,6 @@ class Simulation:
                 # -    current rate of symptomatic
                 R_2 = self.zeta * Y_rate
 
-
                 # total event rate
                 event_rate = P + A + Y + R_1 + R_2
 
@@ -228,7 +226,6 @@ class Simulation:
                 u1 = np.random.random()
                 tau = 1/event_rate * np.log(1/u1)
                 self.time[i, j+1] = self.time[i, j] + tau
-
 
                 # randomly choose the event based on the proportion of each event to the total of all events
                 event = np.random.choice(["P", "A", "Y", "R_1", "R_2"], p=[
@@ -267,6 +264,10 @@ class Simulation:
 
                 # update array index
                 j += 1
+            # ensure N_S, N_R, and time do not have any empty values
+            self.N_S[i, j+1:] = self.N_S[i, j]
+            self.N_R[i, j+1:] = self.N_R[i, j]
+            self.time[i, j+1:] = self.time[i, j]
 
     def __clean_up_conf(self, confs, avgs):
         """Clean up NaNs in confidence intervals by replacing each NaN with its avg."""
@@ -393,17 +394,19 @@ class Simulation:
         self.__plot_avg_confs(axs[4], "Recovered", Time_avg,
                               N_R_res[0], N_R_res[1], N_R_res[2], "pink")
         fig.text(0.5, 0.08, 'Time', ha='center', fontsize=25)
-        fig.text(0.01, 0.5, 'Population', va='center', rotation='vertical', fontsize=25)
+        fig.text(0.01, 0.5, 'Population', va='center',
+                 rotation='vertical', fontsize=25)
         plt.savefig(plot_name)
 
     def __calculate_stats(self, name, array):
         "Calculate mean, std, range, and conf on array."
         mean = np.mean(array)
         std = np.std(array)
-        range = np.max(array) - np.min(array)
+        min = np.min(array)
+        max = np.max(array)
         conf = stats.t.interval(self.conf_level, df=len(
             array) - 1, loc=mean, scale=np.std(array, ddof=1) / np.sqrt(len(array)))
-        return (name, mean, std, range, conf)
+        return (name, mean, std, min, max, conf)
 
     def __data_collector(self):
         """Calculate metrics."""
@@ -428,10 +431,10 @@ class Simulation:
         # calculate attack rate for every cycle
         attack_rates = []
         for i in range(self.cycles):
-            attack_rate = max(self.N_R[i]) / self.N_S[i][0]
+            attack_rate = (self.N_S0 - min(self.N_S[i])) / self.N_S0
             attack_rates.append(attack_rate)
 
-        return (("name", "mean", "std", "range", "conf"), self.__calculate_stats("peak_infections", peak_infections), self.__calculate_stats("peak_times", peak_times), self.__calculate_stats("attack_rates", attack_rates), ("R0", R0, R0, R0, R0))
+        return (("name", "mean", "std", "min", "max", "conf"), self.__calculate_stats("peak_infections", peak_infections), self.__calculate_stats("peak_times", peak_times), self.__calculate_stats("attack_rates", attack_rates), ("R0", R0, R0, R0, R0))
 
     def __export_to_csv(self, array, name):
         """Export csv of array as name."""
@@ -515,4 +518,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
     main(args.seed, args.N_S0, args.N_P0, args.N_A0, args.N_Y0, args.N_R0, args.s, args.p, args.a, args.y, args.cycles, args.avg_steps,
          args.plot_name, args.metrics_name, args.N_S_name, args.N_P_name, args.N_A_name, args.N_Y_name, args.N_R_name, args.time_name)
-
