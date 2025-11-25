@@ -1,0 +1,685 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{biblatex}
+\usepackage{float}
+\usepackage{placeins}
+\graphicspath{ {./imgs/} {../run_results} {../m4_run_results}}
+\addbibresource{CS4632_Ali_Ali.bib}
+
+\title{Milestone 4: Analysis \& Validation -- The effect of behavioral changes on the spread of COVID-19.
+}
+\author{Ali Ali}
+\date{November 2025}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+Our simulation was developed in order to better understand the effect of behavioral changes on the spread of COVID-19. This model is based on a modified SIR model where the infectious component is divided into (A)symptomatic, a permanent until removal infectious state without symptoms, (P)re-symptomatic, a temporary infectious state without symptoms that transitions to symptomatic, and s(Y)ptomatic, a permanent until removal infectious state with symptoms. Furthermore behavioral changes are modeled as a parameter describing the rate of contact, which is a fraction, of each component except removed. These rate of contacts are denoted by lower case versions of their infectious components such as $s$ for the susceptible component. Also, the simulation randomly chooses each event by following a Poisson distribution using the Gillespie algorithm. Finally, the simulation outputs the attack rate, proportion of at-risk population that contracts the disease during the epidemic, peak infections, the highest number of infections at a time, peak time, the time of peak infections, and a plot displaying the population of each component with time.
+\newline\newline
+The purpose of this document is to better understand the above described model. Specifically, we will first measure the sensitivity of the $s$, $p$, $a$, and $y$ parameters against the attack rate, peak infection, and peak time. This will help us understand which parameters have the largest effect on the epidemic. After that we will analyze scenarios such as a normal behavior change scenario, skeptic behavior change scenario, high infection testing scenario, and a no behavior change scenario to understand how common real world scenarios behave using our model. Furthermore, we will validate our model by using face validation and extreme condition testing. Finally, we will statistically analyze all the previous runs' attack rates, peak times, and peak infections in order to better understand our outputs.
+\newline\newline
+\section{Sensitivity Parameter Analysis}
+To best understand our simulation we need to measure which behavioral parameters affect our output the most. Specifically, we will measure the sensitivity of the $s$, $p$, $a$, and $y$ for the attack rate, peak time of infections, and peak infection metrics. We will measure the sensitivity by using the calculation method $ \frac{\% change in output}{\% change in input}$.
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Parameter & Attack Rate Sensitivity \\ [0.5ex]
+		\hline\hline
+		$s$       & 0.29                    \\
+		\hline
+		$p$       & 0.11                    \\
+		\hline
+		$a$       & 0.11                    \\
+		\hline
+		$y$       & 0.07                    \\
+		\hline
+	\end{tabular}
+	\caption{We can see that for the attack rate, $s$, our susceptible rate of contact, is the most sensitive while the change in our infectious components ($p$, $a$, $y$) is the about the same.} 
+\end{table}
+\begin{table}[!h]
+	\begin{center}
+		\begin{tabular}{|l|l|}
+			\hline
+			Parameter & Peak Infection Time Sensitivity \\ [0.5ex]
+			\hline\hline
+			$s$       & 0.03                            \\
+			\hline
+			$p$       & 0.43                            \\
+			\hline
+			$a$       & 0.44                            \\
+			\hline
+			$y$       & 0.42                            \\
+			\hline
+		\end{tabular}
+		\caption{Immediately, we notice that $s$ has an almost negligible effect, while the infectious components are about the same.}
+	\end{center}
+\end{table}
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Parameter & Peak Infections Sensitivity \\ [0.5ex]
+		\hline\hline
+		$s$       & 0.60                        \\
+		\hline
+		$p$       & 0.39                        \\
+		\hline
+		$a$       & 0.46                        \\
+		\hline
+		$y$       & 0.37                        \\
+		\hline
+	\end{tabular}
+	\caption{Unlike last time $s$ is the most sensitive, while the infectious components in terms of sensitivity are ranked with $a$ first, $p$ second, and $y$ third.}
+\end{table}
+
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Parameter & Average Metric Sensitivity \\ [0.5ex]
+		\hline\hline
+		$s$       & 0.31                       \\
+		\hline
+		$p$       & 0.31                       \\
+		\hline
+		$a$       & 0.34                       \\
+		\hline
+		$y$       & 0.29                       \\
+		\hline
+	\end{tabular}
+	\caption{Average of each sensitivity for attack rate, peak infection time, and peak infections. Notice that $a$ is the highest, $p$ and $s$ are tied for second, and $y$ is last.}
+\end{table}
+\FloatBarrier
+Examining our results we see that each parameter has varying sensitivity depending on the metric measured. Some metrics such as $s$ for attack rate and $s$ for peak infection time can be the highest in one metric and the lowest in another. Some interesting conclusions are that $s$ has almost no effect on peak infection time but a large affect on peak infections and attack rate signifying that $s$ only affects the epidemics amplitude but not its length. Another interesting result is that $a$ has the highest affect on peak infections even though it is the least infectious of the infectious components. Finally, if we were to consider each metric equally important than $a$ would be our most important parameter but not by much. Though, if we were to consider each metric by itself than $s$ for attack rate, $a$ for peak infection time, and $s$ for peak infections would be the most important parameters.
+\newline\newline
+Overall, the results show that our behavior parameters do affect the epidemic's outcomes though the specific properties of the infectious components are somewhat unclear.
+\section{Scenario Analysis}
+A simulation is only useful if it allows us to better understand the real world and to accomplish that that we have prepared four realistic scenarios. These include scenarios with normal behavior change, a scenario with a disease skeptic population, a scenario with high self testing, and finally a scenario without any behavior change.
+
+\newline
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Input Parameters & Value \\ [0.5ex]
+		\hline\hline
+		$s$              & 0.70  \\
+		\hline
+		$p$              & 0.70  \\
+		\hline
+		$a$              & 0.70  \\
+		\hline
+		$y$              & 0.30  \\
+		\hline
+	\end{tabular}
+	\caption{Input parameters for normal scenario. Notice that each parameter except for $y$ has the same value signifying the lack of self-testing. All other parameters take on their default values.}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.43]{realistic_plot.png}
+	\caption{Plot of normal scenario. Notice that the disease dies after infecting only half of the population.}
+\end{figure}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Metrics         & Mean Value \\ [0.5ex]
+		\hline\hline
+		Peak Infections & 367.62     \\
+		\hline
+		Peak Times      & 209633.70  \\
+		\hline
+		Attack Rate     & 0.49       \\
+		\hline
+	\end{tabular}
+	\caption{Metrics for normal scenario.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Input Parameters & Value \\ [0.5ex]
+		\hline\hline
+		$s$              & 0.80  \\
+		\hline
+		$p$              & 0.80  \\
+		\hline
+		$a$              & 0.80  \\
+		\hline
+		$y$              & 0.30  \\
+		\hline
+	\end{tabular}
+	\caption{Input parameters for skeptic scenario. Notice that each parameter except for $y$ has the same value signifying the lack of self-testing. All other parameters take on their default values.}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.43]{skeptic_plot.png}
+	\caption{Plot of skeptic scenario. Notice that the disease dies after infecting only 3/4ths of the population.}
+\end{figure}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Metrics         & Mean Value \\ [0.5ex]
+		\hline\hline
+		Peak Infections & 566.08     \\
+		\hline
+		Peak Times      & 179403.47  \\
+		\hline
+		Attack Rate     & 0.60       \\
+		\hline
+	\end{tabular}
+	\caption{Metrics for skeptic scenario.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Input Parameters & Value \\ [0.5ex]
+		\hline\hline
+		$s$              & 0.70  \\
+		\hline
+		$p$              & 0.50  \\
+		\hline
+		$a$              & 0.50  \\
+		\hline
+		$y$              & 0.30  \\
+		\hline
+	\end{tabular}
+	\caption{Input parameters for high self-testing scenario. Notice that $p$ and $a$ have the same but a different value from s signifying high testing. All other parameters take on their default values.}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.43]{testing_plot.png}
+	\caption{Plot of high testing scenario. Notice that the disease dies after infecting only 2/10ths of the population.}
+\end{figure}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Metrics         & Mean Value \\ [0.5ex]
+		\hline\hline
+		Peak Infections & 50.92      \\
+		\hline
+		Peak Times      & 293480.70  \\
+		\hline
+		Attack Rate     & 0.12       \\
+		\hline
+	\end{tabular}
+	\caption{Metrics for high testing scenario.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Input Parameters & Value \\ [0.5ex]
+		\hline\hline
+		$s$              & 1.00  \\
+		\hline
+		$p$              & 1.00  \\
+		\hline
+		$a$              & 1.00  \\
+		\hline
+		$y$              & 1.00  \\
+		\hline
+	\end{tabular}
+	\caption{Input parameters for no behavior change scenario. Notice that all parameters are the same signifying no change in behavior. All parameters take on their default values including $spay$ since these are their default values.}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.43]{nochange_plot.png}
+	\caption{Plot of testing scenario. Notice that the disease dies after infecting almost all of the population.}
+\end{figure}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Metrics         & Mean Value \\ [0.5ex]
+		\hline\hline
+		Peak Infections & 1621.04    \\
+		\hline
+		Peak Times      & 94842.89   \\
+		\hline
+		Attack Rate     & 0.91       \\
+		\hline
+	\end{tabular}
+	\caption{Metrics for no behavior change scenario.}
+\end{table}
+The results show that the COVID-19 epidemic is highly dependent on the symptomatic state. Furthermore, a population's slight skepticism towards COVID-19, which can be displayed in higher rates of contact, can lead to a significant increase in the attack rate and peak infections. Finally, if high levels of self testing were to impact behavior changes then COVID-19 would spread at a much smaller rate.
+\newline\newline
+In general, the scenario's layout for the behavior parameters has a significant affect on the epidemic's outcomes.
+
+\section{Validation}
+Our model to be useful must accurately simulate the real world. In order to confirm our model is accurate we have prepared two methods that are Face Validation and Extreme Condition Testing.
+\subsection{Face Validation}
+Face Validation is a technique that asks if a simulation makes logical sense. We have prepared three examples where we believe our simulation displays behavior that makes sense.
+
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Input Parameters & Value \\ [0.5ex]
+		\hline\hline
+		$s$              & 1.00  \\
+		\hline
+		$p$              & 1.00  \\
+		\hline
+		$a$              & 1.00  \\
+		\hline
+		$y$              & 1.00  \\
+		\hline
+	\end{tabular}
+	\caption{Input parameters for high no behavior change scenario. Notice that all parameters are the same signifying no change in behavior. All other parameters take on their default values including $spay$ since these are their default values.}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.43]{nochange_plot.png}
+	\caption{Plot of no behavioral change scenario. Notice that the disease increases exponentially, peaks, and decreases exponentially.}
+\end{figure}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Input Parameters & Value \\ [0.5ex]
+		\hline\hline
+		$s$              & 0.70  \\
+		\hline
+		$p$              & 0.70  \\
+		\hline
+		$a$              & 0.70  \\
+		\hline
+		$y$              & 0.30  \\
+		\hline
+	\end{tabular}
+	\caption{Input parameters for normal scenario. Notice that each parameter except for y has the same value signifying the lack of self-testing. All other parameters take on their default values.}
+\end{table}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.43]{normal_plot.png}
+	\caption{Plot of normal behavioral change scenario. Notice that the disease has less infections than the previous plot and is wider.}
+\end{figure}
+
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Input Parameters & Value \\ [0.5ex]
+		\hline\hline
+		$s$              & 1.00  \\
+		\hline
+		$p$              & 0.00  \\
+		\hline
+		$a$              & 0.00  \\
+		\hline
+		$y$              & 0.00  \\
+		\hline
+	\end{tabular}
+	\caption{Input parameters for isolation scenario. Notice that all infectious components are 0 indicating that the initial infectious population is immediately isolated. All other parameters take on their default values.}
+\end{table}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.43]{isolation_plot.png}
+	\caption{Plot of isolation scenario. Notice how the susceptible population does not decrease.}
+\end{figure}
+
+Each example displays behavior that makes logical sense. The first example displays behavior typical of epidemics with an exponential increase, a peak, and a exponential decrease. The second example displays how normal behavioral change, such as the general population decreasing contact and symptomatic persons self-isolating, leads to less infections, a wider peak, and a longer epidemic. Finally, the third example shows how immediate self-isolation for the initial infected population leads to no outbreak of an epidemic.
+\newline\newline
+Overall, our testing shows that the affects of the behavioral parameters do make logical sense.
+\subsection{Extreme Condition Testing}
+Extreme Condition Testing is a technique to test a simulation with boundary values to determine whether or not a simulation handles extreme conditions logically. We have prepared three examples that test the limits of our simulation.
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Input Parameters & Value \\ [0.5ex]
+		\hline\hline
+		$s$              & 0.00  \\
+		\hline
+		$p$              & 0.00  \\
+		\hline
+		$a$              & 0.00  \\
+		\hline
+		$y$              & 0.00  \\
+		\hline
+	\end{tabular}
+	\caption{Input parameters for no contact scenario. Notice that all components are 0 indicating that none of the population is making any contacts. All other parameters take on their default values.}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.43]{nocontact_plot.png}
+	\caption{Plot of zero contact for each component scenario. Notice how the susceptible population does not decrease.}
+\end{figure}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Input Parameters & Value \\ [0.5ex]
+		\hline\hline
+		$s$              & 1.50  \\
+		\hline
+		$p$              & 1.50  \\
+		\hline
+		$a$              & 1.50  \\
+		\hline
+		$y$              & 1.50  \\
+		\hline
+	\end{tabular}
+	\caption{Input parameters for increased contact scenario. Notice that all components are above 1.00 indicating that each component is increasing their contacts. All other parameters take on their default values.}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.43]{increased_plot.png}
+	\caption{Plot of increased contact behavioral change scenario. Notice that the disease increases exponentially, peaks, and decreases exponentially.}
+\end{figure}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Input Parameters & Value \\ [0.5ex]
+		\hline\hline
+		$s$              & 1.00  \\
+		\hline
+		$p$              & 1.00  \\
+		\hline
+		$a$              & 1.00  \\
+		\hline
+		$y$              & 1.00  \\
+		\hline
+		$N\_Y0$          & 500   \\
+		\hline
+	\end{tabular}
+	\caption{Input parameters for increased symptomatic population scenario. Notice that all behavioral components are 1.00 while N\_Y0 starts off with 500 infected compared to a default of 0. All other parameters take on their default values.}
+\end{table}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.43]{infecpop_plot.png}
+	\caption{Plot of increased symptomatic population scenario. Notice that the disease starts with a large symptomatic population.}
+\end{figure}
+
+As you can tell each example displays behavior that makes logical sense and executes without error. The first example correctly simulates the outcome of zero contact for each component which is a susceptible population that does not decrease. The second example shows that an increased contact rate scenario runs correctly leading to a realtively rapid rise and fall. Finally, the third and last example displays the correct outcome of an increased symptomatic population which is that the susceptible population immediately decreases and the infectious components' increase quickly to mirror the symptomatic component.
+\newline\newline
+In summary, extreme testing of our behavioral parameters does not result in illogical outcomes.
+\section{Statistical Analysis}
+Throughout this document, we have presented multiple runs of our simulation with only a mean value for each. While this was enough for each analysis it does not paint a realistic picture of our simulation. To ensure that we have a full grasp of our simulation I have prepared the mean, average deviation, min, max, and 95\% confidence interval for the attack rate, peak infection time, and peak infection metrics for each run.
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean     & Std Dev  & Min      & Max       & Conf                 \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.91     & 0.01     & 0.89     & 0.92      & [0.90, 0.92]         \\
+		\hline
+		Peak Time       & 94832.69 & 10748.34 & 77779.25 & 130613.60 & [91747.03, 97918.34] \\
+		\hline
+		Peak Infections & 1611.44  & 57.12    & 1489.00  & 1738.00   & [1595.04, 1627.84]   \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for default parameters.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean     & Std Dev & Min      & Max       & Conf                 \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.83     & 0.01    & 0.82     & 0.85      & [0.83, 0.84]         \\
+		\hline
+		Peak Time       & 94119.97 & 9338.58 & 77914.14 & 116379.55 & [91439.03, 96800.91] \\
+		\hline
+		Peak Infections & 1319.86  & 49.24   & 1185.00  & 1439.00   & [1305.72, 1334.00]   \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for s parameter sensitivity. Input parameters are s=0.70 and the rest are defaults.}
+\end{table}
+
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.88      & 0.01     & 0.86     & 0.90      & [0.88, 0.89]           \\
+		\hline
+		Peak Time       & 107085.57 & 10936.41 & 87040.14 & 141283.44 & [103945.92, 110225.22] \\
+		\hline
+		Peak Infections & 1423.14   & 54.49    & 1284.0   & 1551.0    & [1407.50, 1438.78]     \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for p parameter sensitivity. Input parameters are p=0.70 and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.88      & 0.01     & 0.86     & 0.89      & [0.88, 0.88]           \\
+		\hline
+		Peak Time       & 107474.60 & 11859.13 & 83763.04 & 152855.54 & [104070.06, 110879.15] \\
+		\hline
+		Peak Infections & 1390.58   & 46.85    & 1310.00  & 1522.00   & [1377.13, 1404.03]     \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for a parameter sensitivity. Input parameters are a=0.70 and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev & Min      & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.89      & 0.01    & 0.87     & 0.91      & [0.88, 0.89]           \\
+		\hline
+		Peak Time       & 108710.06 & 9929.95 & 87939.37 & 130125.35 & [105859.35, 111560.77] \\
+		\hline
+		Peak Infections & 1443.00   & 57.89   & 1325.00  & 1562.00   & [1426.38, 1459.62]     \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for y parameter sensitivity. Input parameters are y=0.70 and the rest are defaults.}
+\end{table}
+
+
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.49      & 0.07     & 0.00     & 0.56      & [0.47, 0.51]           \\
+		\hline
+		Peak Time       & 209633.70 & 56672.49 & 15634.34 & 402826.53 & [193364.03, 225903.36] \\
+		\hline
+		Peak Infections & 367.62    & 74.00    & 6.00     & 482.00    & [346.37, 388.86]       \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for realistic scenario. Input parameters are s=0.70, p=0.70, a=0.70, y=0.30, and the rest are defaults.}
+\end{table}
+
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min    & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.60      & 0.15     & 0.00   & 0.67      & [0.56, 0.64]           \\
+		\hline
+		Peak Time       & 179403.47 & 53903.11 & 321.94 & 294228.51 & [163928.85, 194878.10] \\
+		\hline
+		Peak Infections & 566.08    & 153.42   & 6.00   & 737.00    & [522.03, 610.13]       \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for skeptic scenario. Input parameters are s=0.80, p=0.80, a=0.80, y=0.80, and the rest are defaults.}
+\end{table}
+
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev   & Min  & Max        & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.12      & 0.09      & 0.00 & 0.25       & [0.09, 0.14]           \\
+		\hline
+		Peak Time       & 293480.70 & 280669.17 & 0.00 & 1205771.17 & [212905.58, 374055.81] \\
+		\hline
+		Peak Infections & 50.92     & 35.51     & 5.00 & 121.0      & [40.73, 61.11]         \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for high testing scenario. Input parameters are s=0.70, p=0.50, a=0.50, y=0.30, and the rest are defaults.}
+\end{table}
+
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean     & Std Dev & Min      & Max       & Conf                \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.91     & 0.01    & 0.90     & 0.93      & [0.91, 0.91]        \\
+		\hline
+		Peak Time       & 94842.89 & 8471.12 & 70310.49 & 119974.50 & [92410.99, 9724.80] \\
+		\hline
+		Peak Infections & 1621.04  & 61.99   & 1474.00  & 1763.00   & [1603.24, 1638.84]  \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for no change scenario. Input parameters are all defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean     & Std Dev & Min      & Max       & Conf                \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.91     & 0.01    & 0.90     & 0.93      & [0.91, 0.91]        \\
+		\hline
+		Peak Time       & 94842.89 & 8471.12 & 70310.49 & 119974.50 & [92410.99, 9724.80] \\
+		\hline
+		Peak Infections & 1621.04  & 61.99   & 1474.00  & 1763.00   & [1603.24, 1638.84]  \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for no change validation. Input parameters are all defaults.}
+\end{table}
+
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.49      & 0.07     & 0.00     & 0.56      & [0.47, 0.51]           \\
+		\hline
+		Peak Time       & 209633.70 & 56672.49 & 15634.34 & 402826.53 & [193364.03, 225903.36] \\
+		\hline
+		Peak Infections & 367.62    & 74.00    & 6.00     & 482.00    & [346.37, 388.86]       \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for realistic validation. Input parameters are s=0.70, p=0.70, a=0.70, y=0.30, and the rest are defaults.}
+\end{table}
+
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean & Std Dev & Min  & Max  & Conf         \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.00 & 0.00    & 0.00 & 0.00 & [0.00, 0.00] \\
+		\hline
+		Peak Time       & 0.00 & 0.00    & 0.00 & 0.00 & [0.00, 0.00] \\
+		\hline
+		Peak Infections & 5.00 & 0.00    & 5.00 & 5.00 & [5.00, 5.00] \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for isolation validation. Input parameters are s=1.00, p=0.00, a=0.00, y=0.00, and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean & Std Dev & Min  & Max  & Conf         \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.00 & 0.00    & 0.00 & 0.00 & [0.00, 0.00] \\
+		\hline
+		Peak Time       & 0.00 & 0.00    & 0.00 & 0.00 & [0.00, 0.00] \\
+		\hline
+		Peak Infections & 5.00 & 0.00    & 5.00 & 5.00 & [5.00, 5.00] \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for no contact condition testing. Input parameters are s=0.00 p=0.00, a=0.00, y=0.00, and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean     & Std Dev & Min      & Max      & Conf                 \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.99     & 0.00    & 0.99     & 0.99     & [0.99, 0.99]         \\
+		\hline
+		Peak Time       & 58359.73 & 4319.21 & 49662.70 & 68829.95 & [57119.77, 59599.70] \\
+		\hline
+		Peak Infections & 2554.44  & 46.48   & 2435.00  & 2695.00  & [2541.10, 2567.78]   \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for increased behavior condition testing. Input parameters are s=1.50, p=1.50, a=1.50, y=1.50, and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean     & Std Dev & Min      & Max      & Conf                 \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.91     & 0.01    & 0.89     & 0.92     & [0.90, 0.91]         \\
+		\hline
+		Peak Time       & 39538.56 & 2490.37 & 34240.66 & 47305.05 & [38823.62, 40253.50] \\
+		\hline
+		Peak Infections & 1873.80  & 51.50   & 1783.0   & 2039.00  & [1859.02, 1888.58]   \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for increased infected population condition testing. Input parameters are N\_Y0=500 and the rest are defaults.}
+\end{table}
+
+\FloatBarrier
+Looking closely at our results we find that some runs suffer from outliers skewing the results which is caused by the epidemic randomly dying before it spreads. Specifically, Table 24, Table 25, Table 26, and Table 29 have minimum peak infections in the single digits while their means are much higher. From experimentation these premature extinctions could be prevented with just a slightly higher 0th infectious population.
+\newline\newline
+Overall, low behavioral parameter values lead to some skewed results which could be improved.
+\section{Conclusion}
+Throughout this document we have discovered several important findings. The fact that $a$ on average is the most important parameter for every metric while $s$ is the most important parameter for most metrics. Furthermore, the epidemic performs the best, meaning low peak infections, high peak times, and low attack rates during a high testing scenario. In general, the non-symptomatic proportion of infections has a large effect on the epidemic, and scenarios that reduce their impact tend to lead to better outcomes while those that don't lead to worse. Of course lower contact rates especially with $s$ can also lead to good outcomes. On the model itself, there are some discrepancies regarding some runs where the disease randomly dies before spreading leading to skewed results. Furthermore, how the model has represented the asymptomatic, pre-symptomatic, and symptomatic states may not be the best making it harder to analyze. Overall, the model is promising though some improvements could be made.
+\end{document}
+
+
