@@ -39,39 +39,39 @@ python simulation.py [-h] [-seed SEED] [-N_S0 N_S0] [-N_P0 N_P0] [-N_A0 N_A0] [-
 
 <pre>
 positional arguments:
-  plot\_name             plot file name to output 
-  metrics\_name          metrics csv file name to output
-  N\_S\_name              Susceptible array csv file name to output
-  N\_P\_name              Pre-symptomatic array csv file name to output
-  N\_A\_name              Asymptomatic array csv file name to output
-  N\_Y\_name              Symptomatic array csv file name to output
-  N\_R\_name              Recovered array csv file name to output
-  time\_name             Time array csv file name to output
+  plot_name             plot file name to output 
+  metrics_name          metrics csv file name to output
+  N_S_name              Susceptible array csv file name to output
+  N_P_name              Pre-symptomatic array csv file name to output
+  N_A_name              Asymptomatic array csv file name to output
+  N_Y_name              Symptomatic array csv file name to output
+  N_R_name              Recovered array csv file name to output
+  time_name             Time array csv file name to output
 
 options:
   -h, &ndash;help            show this help message and exit
   -seed SEED            value used to initialize random number generator
-  -N\_S0 N\_S0            initial amount of susceptible population
-  -N\_P0 N\_P0            initial amount of pre-symptomatic population
-  -N\_A0 N\_A0            initial amount of asymptomatic population
-  -N\_Y0 N\_Y0            initial amount of symptomatic population
-  -N\_R0 N\_R0            initial amount of recoverd population
+  -N_S0 N_S0            initial amount of susceptible population
+  -N_P0 N_P0            initial amount of pre-symptomatic population
+  -N_A0 N_A0            initial amount of asymptomatic population
+  -N_Y0 N_Y0            initial amount of symptomatic population
+  -N_R0 N_R0            initial amount of recoverd population
   -s S                  the fraction of contact that susceptible members will reduce
   -p P                  the fraction of contact that pre-symptomatic members will reduce
   -a A                  the fraction of contact that asymptomatic members will reduce
   -y Y                  the fraction of contact that symptomatic members will reduce
   -cycles CYCLES        the number of cycles the simulation will run
-  -avg\_steps AVG\_STEPS  the number of equally distant in time averages we will be computing over the simulation time
+  -avg_steps AVG_STEPS  the number of equally distant in time averages we will be computing over the simulation time
 
 </pre>
 <a id="org998d5b4"></a>
 
 # Example Outputs
 
-Ensure that you have followed the installation instructions beforehand:
-Note: Outputs can be slightly different due to stochastic properties.
-$ python simulation.py plot.png metrics.csv N\_S.csv N\_P.csv N\_A.csv N\_Y.csv N\_R.csv time\_name.csv
-$ cat ./metrics.csv
+Ensure that you have followed the installation instructions beforehand:\
+Note: Outputs can be slightly different due to stochastic properties.\
+$ python simulation.py plot.png metrics.csv N\_S.csv N\_P.csv N\_A.csv N\_Y.csv N\_R.csv time\_name.csv\
+$ cat ./metrics.csv\
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -139,8 +139,8 @@ $ cat ./metrics.csv
 
 [Plot of default run](examples/plot.png)
 
-$ python simulation.py skeptic\_plot.png skeptic\_metrics.csv skeptic\_N\_S.csv skeptic\_N\_P.csv skeptic\_N\_A.csv skeptic\_N\_Y.csv skeptic\_N\_R.csv ignorance\_time\_name.csv -s 0.80 -p 0.80 -a 0.80 -y 0.30 \
-$ cat ./skeptic\_metrics.csv \
+$ python simulation.py skeptic\_plot.png skeptic\_metrics.csv skeptic\_N\_S.csv skeptic\_N\_P.csv skeptic\_N\_A.csv skeptic\_N\_Y.csv skeptic\_N\_R.csv ignorance\_time\_name.csv -s 0.80 -p 0.80 -a 0.80 -y 0.30\
+$ cat ./skeptic\_metrics.csv\
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -208,8 +208,8 @@ $ cat ./skeptic\_metrics.csv \
 
 [Plot of skeptic run](examples/skeptic\_plot.png)
 
-$ python simulation.py infecpop\_plot.png infecpop\_metrics.csv infecpop\_N\_S.csv infecpop\_N\_P.csv infecpop\_N\_A.csv infecpop\_N\_Y.csv infecpop\_N\_R.csv infecpop\_time\_name.csv -N\_Y0 500
-$ cat ./infecpop\_metrics.csv
+$ python simulation.py infecpop\_plot.png infecpop\_metrics.csv infecpop\_N\_S.csv infecpop\_N\_P.csv infecpop\_N\_A.csv infecpop\_N\_Y.csv infecpop\_N\_R.csv infecpop\_time\_name.csv -N\_Y0 500\
+$ cat ./infecpop\_metrics.csv\
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
