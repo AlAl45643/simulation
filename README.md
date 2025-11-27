@@ -21,55 +21,56 @@
 
 To install dependencies for this program do the following:
 
-$ python -m venv .venv
-$ source .venv/bin/activate
-$ pip install -r requirements
+$ python -m venv .venv\
+$ source .venv/bin/activate\
+$ pip install -r requirements\
 
 
 <a id="org4ff40c3"></a>
 
 # Usage Guide
 
-python simulation.py [-h] [-seed SEED] [-N<sub>S0</sub> N<sub>S0</sub>] [-N<sub>P0</sub> N<sub>P0</sub>] [-N<sub>A0</sub> N<sub>A0</sub>] [-N<sub>Y0</sub> N<sub>Y0</sub>] [-N<sub>R0</sub> N<sub>R0</sub>] [-s S] [-p P] [-a A] [-y Y] [-cycles CYCLES] [-avg<sub>steps</sub> AVG<sub>STEPS</sub>] plot<sub>name</sub> metrics<sub>name</sub> N<sub>S</sub><sub>name</sub> N<sub>P</sub><sub>name</sub> N<sub>A</sub><sub>name</sub> N<sub>Y</sub><sub>name</sub> N<sub>R</sub><sub>name</sub> time<sub>name</sub>
+python simulation.py [-h] [-seed SEED] [-N_S0 N_S0] [-N_P0 N_P0] [-N_A0 N_A0] [-N_Y0 N_Y0] [-N_R0 N_R0] [-s S] [-p P] [-a A] [-y Y] [-cycles CYCLES] [-avg_steps AVG_STEPS] plot_name metrics_name N_S_name N_P_name N_A_name N_Y_name N_R_name time_name
 
 
 <a id="org956e252"></a>
 
 # Parameter Explanations
 
+<pre>
 positional arguments:
-  plot<sub>name</sub>             plot file name to output
-  metrics<sub>name</sub>          metrics csv file name to output
-  N<sub>S</sub><sub>name</sub>              Susceptible array csv file name to output
-  N<sub>P</sub><sub>name</sub>              Pre-symptomatic array csv file name to output
-  N<sub>A</sub><sub>name</sub>              Asymptomatic array csv file name to output
-  N<sub>Y</sub><sub>name</sub>              Symptomatic array csv file name to output
-  N<sub>R</sub><sub>name</sub>              Recovered array csv file name to output
-  time<sub>name</sub>             Time array csv file name to output
+  plot\_name             plot file name to output 
+  metrics\_name          metrics csv file name to output
+  N\_S\_name              Susceptible array csv file name to output
+  N\_P\_name              Pre-symptomatic array csv file name to output
+  N\_A\_name              Asymptomatic array csv file name to output
+  N\_Y\_name              Symptomatic array csv file name to output
+  N\_R\_name              Recovered array csv file name to output
+  time\_name             Time array csv file name to output
 
 options:
   -h, &ndash;help            show this help message and exit
   -seed SEED            value used to initialize random number generator
-  -N<sub>S0</sub> N<sub>S0</sub>            initial amount of susceptible population
-  -N<sub>P0</sub> N<sub>P0</sub>            initial amount of pre-symptomatic population
-  -N<sub>A0</sub> N<sub>A0</sub>            initial amount of asymptomatic population
-  -N<sub>Y0</sub> N<sub>Y0</sub>            initial amount of symptomatic population
-  -N<sub>R0</sub> N<sub>R0</sub>            initial amount of recoverd population
+  -N\_S0 N\_S0            initial amount of susceptible population
+  -N\_P0 N\_P0            initial amount of pre-symptomatic population
+  -N\_A0 N\_A0            initial amount of asymptomatic population
+  -N\_Y0 N\_Y0            initial amount of symptomatic population
+  -N\_R0 N\_R0            initial amount of recoverd population
   -s S                  the fraction of contact that susceptible members will reduce
   -p P                  the fraction of contact that pre-symptomatic members will reduce
   -a A                  the fraction of contact that asymptomatic members will reduce
   -y Y                  the fraction of contact that symptomatic members will reduce
   -cycles CYCLES        the number of cycles the simulation will run
-  -avg<sub>steps</sub> AVG<sub>STEPS</sub>  the number of equally distant in time averages we will be computing over the simulation time
+  -avg\_steps AVG\_STEPS  the number of equally distant in time averages we will be computing over the simulation time
 
-
+</pre>
 <a id="org998d5b4"></a>
 
 # Example Outputs
 
 Ensure that you have followed the installation instructions beforehand:
 Note: Outputs can be slightly different due to stochastic properties.
-$ python simulation.py plot.png metrics.csv N<sub>S.csv</sub> N<sub>P.csv</sub> N<sub>A.csv</sub> N<sub>Y.csv</sub> N<sub>R.csv</sub> time<sub>name.csv</sub>
+$ python simulation.py plot.png metrics.csv N\_S.csv N\_P.csv N\_A.csv N\_Y.csv N\_R.csv time\_name.csv
 $ cat ./metrics.csv
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
@@ -108,7 +109,7 @@ $ cat ./metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">peak<sub>infections</sub></td>
+<td class="org-left">peak\_infections</td>
 <td class="org-right">1607.7</td>
 <td class="org-right">54.329826062670215</td>
 <td class="org-right">1512.0</td>
@@ -117,7 +118,7 @@ $ cat ./metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">peak<sub>times</sub></td>
+<td class="org-left">peak\_times</td>
 <td class="org-right">95548.3358400622</td>
 <td class="org-right">9304.133210121096</td>
 <td class="org-right">75886.2527655324</td>
@@ -126,7 +127,7 @@ $ cat ./metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">attack<sub>rates</sub></td>
+<td class="org-left">attack\_rates</td>
 <td class="org-right">0.908452</td>
 <td class="org-right">0.006205521412419749</td>
 <td class="org-right">0.8948</td>
@@ -138,8 +139,8 @@ $ cat ./metrics.csv
 
 [Plot of default run](examples/plot.png)
 
-$ python simulation.py skeptic<sub>plot.png</sub> skeptic<sub>metrics.csv</sub> skeptic<sub>N</sub><sub>S.csv</sub> skeptic<sub>N</sub><sub>P.csv</sub> skeptic<sub>N</sub><sub>A.csv</sub> skeptic<sub>N</sub><sub>Y.csv</sub> skeptic<sub>N</sub><sub>R.csv</sub> ignorance<sub>time</sub><sub>name.csv</sub> -s 0.80 -p 0.80 -a 0.80 -y 0.30
-$ cat ./skeptic<sub>metrics.csv</sub>
+$ python simulation.py skeptic\_plot.png skeptic\_metrics.csv skeptic\_N\_S.csv skeptic\_N\_P.csv skeptic\_N\_A.csv skeptic\_N\_Y.csv skeptic\_N\_R.csv ignorance\_time\_name.csv -s 0.80 -p 0.80 -a 0.80 -y 0.30 \
+$ cat ./skeptic\_metrics.csv \
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -177,7 +178,7 @@ $ cat ./skeptic<sub>metrics.csv</sub>
 </tr>
 
 <tr>
-<td class="org-left">peak<sub>infections</sub></td>
+<td class="org-left">peak\_infections</td>
 <td class="org-right">618.1</td>
 <td class="org-right">56.63717860204549</td>
 <td class="org-right">487.0</td>
@@ -186,7 +187,7 @@ $ cat ./skeptic<sub>metrics.csv</sub>
 </tr>
 
 <tr>
-<td class="org-left">peak<sub>times</sub></td>
+<td class="org-left">peak\_times</td>
 <td class="org-right">183043.46592964712</td>
 <td class="org-right">26366.99888389911</td>
 <td class="org-right">141785.27822713408</td>
@@ -195,7 +196,7 @@ $ cat ./skeptic<sub>metrics.csv</sub>
 </tr>
 
 <tr>
-<td class="org-left">attack<sub>rates</sub></td>
+<td class="org-left">attack\_rates</td>
 <td class="org-right">0.641204</td>
 <td class="org-right">0.02227233225326885</td>
 <td class="org-right">0.5922</td>
@@ -205,10 +206,10 @@ $ cat ./skeptic<sub>metrics.csv</sub>
 </tbody>
 </table>
 
-[Plot of skeptic run](examples/skeptic_plot.png)
+[Plot of skeptic run](examples/skeptic\_plot.png)
 
-$ python simulation.py infecpop<sub>plot.png</sub> infecpop<sub>metrics.csv</sub> infecpop<sub>N</sub><sub>S.csv</sub> infecpop<sub>N</sub><sub>P.csv</sub> infecpop<sub>N</sub><sub>A.csv</sub> infecpop<sub>N</sub><sub>Y.csv</sub> infecpop<sub>N</sub><sub>R.csv</sub> infecpop<sub>time</sub><sub>name.csv</sub> -N<sub>Y0</sub> 500
-$ cat ./infecpop<sub>metrics.csv</sub>
+$ python simulation.py infecpop\_plot.png infecpop\_metrics.csv infecpop\_N\_S.csv infecpop\_N\_P.csv infecpop\_N\_A.csv infecpop\_N\_Y.csv infecpop\_N\_R.csv infecpop\_time\_name.csv -N\_Y0 500
+$ cat ./infecpop\_metrics.csv
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -246,7 +247,7 @@ $ cat ./infecpop<sub>metrics.csv</sub>
 </tr>
 
 <tr>
-<td class="org-left">peak<sub>infections</sub></td>
+<td class="org-left">peak\_infections</td>
 <td class="org-right">1889.76</td>
 <td class="org-right">52.01098345542026</td>
 <td class="org-right">1788.0</td>
@@ -255,7 +256,7 @@ $ cat ./infecpop<sub>metrics.csv</sub>
 </tr>
 
 <tr>
-<td class="org-left">peak<sub>times</sub></td>
+<td class="org-left">peak\_times</td>
 <td class="org-right">39536.204943631106</td>
 <td class="org-right">2214.2513855250227</td>
 <td class="org-right">35217.0101841283</td>
@@ -264,7 +265,7 @@ $ cat ./infecpop<sub>metrics.csv</sub>
 </tr>
 
 <tr>
-<td class="org-left">attack<sub>rates</sub></td>
+<td class="org-left">attack\_rates</td>
 <td class="org-right">0.9083520000000002</td>
 <td class="org-right">0.006593155238578862</td>
 <td class="org-right">0.8948</td>
@@ -274,5 +275,5 @@ $ cat ./infecpop<sub>metrics.csv</sub>
 </tbody>
 </table>
 
-[Plot of infecpop run](examples/infecpop_plot.png)
+[Plot of infecpop run](examples/infecpop\_plot.png)
 
