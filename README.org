@@ -1,23 +1,64 @@
-* Project Status
-Currently, the initial variables, the Monte-Carlo loop, a plot of the result, and the peak infections at a point in time metric have been completed. On the other hand, we still need to update the initial variables to real-world values, complete the rest of the metrics, and modularize the code. Also, there have been no major changes to the initial proposal though the stochastic processes for the model which were left somewhat unclear have now been defined.
-* Dependencies and Versions 
-+ contourpy==1.3.3
-+ cycler==0.12.1
-+ fonttools==4.60.0
-+ kiwisolver==1.4.9
-+ matplotlib==3.10.6
-+ numpy==2.3.3
-+ packaging==25.0
-+ pillow==11.3.0
-+ pyparsing==3.2.4
-+ python-dateutil==2.9.0.post0
-+ six==1.17.0
-+ pyqt6==6.9.1
-* Setup Instructions
-To run the program, do the following:
-#+begin_example
+* Project Description
+"Simulation" is a project that measures the effect of behavior changes on the spread of COVID-19. It answers questions such as how going out less, socially distancing from others, self-isolating when sick, and reducing contact with others in general affects the spread of the COVID-19. The implementation consists of a stochastic SIR based model with behavioral component parameters.
+* Installation Instructions
+To install dependencies for this program do the following:
+
 $ python -m venv .venv
 $ source .venv/bin/activate
 $ pip install -r requirements
-$ python simulation.py
-#+end_example
+* Usage Guide
+usage: Behavioral Effect on Covid Simulation [-h] [-seed SEED] [-N_S0 N_S0] [-N_P0 N_P0] [-N_A0 N_A0] [-N_Y0 N_Y0] [-N_R0 N_R0] [-s S] [-p P] [-a A] [-y Y] [-cycles CYCLES] [-avg_steps AVG_STEPS]
+                                             plot_name metrics_name N_S_name N_P_name N_A_name N_Y_name N_R_name time_name
+
+* Parameter Explanations
+positional arguments:
+  plot_name             plot file name to output
+  metrics_name          metrics csv file name to output
+  N_S_name              Susceptible array csv file name to output
+  N_P_name              Pre-symptomatic array csv file name to output
+  N_A_name              Asymptomatic array csv file name to output
+  N_Y_name              Symptomatic array csv file name to output
+  N_R_name              Recovered array csv file name to output
+  time_name             Time array csv file name to output
+
+options:
+  -h, --help            show this help message and exit
+  -seed SEED            value used to initialize random number generator
+  -N_S0 N_S0            initial amount of susceptible population
+  -N_P0 N_P0            initial amount of pre-symptomatic population
+  -N_A0 N_A0            initial amount of asymptomatic population
+  -N_Y0 N_Y0            initial amount of symptomatic population
+  -N_R0 N_R0            initial amount of recoverd population
+  -s S                  the fraction of contact that susceptible members will reduce
+  -p P                  the fraction of contact that pre-symptomatic members will reduce
+  -a A                  the fraction of contact that asymptomatic members will reduce
+  -y Y                  the fraction of contact that symptomatic members will reduce
+  -cycles CYCLES        the number of cycles the simulation will run
+  -avg_steps AVG_STEPS  the number of equally distant in time averages we will be computing over the simulation time
+* Example Outputs
+Ensure that you have followed the installation instructions beforehand:
+Note: Outputs can be slightly different due to stochastic properties.
+$ python simulation.py plot.png metrics.csv N_S.csv N_P.csv N_A.csv N_Y.csv N_R.csv time_name.csv
+$ cat ./metrics.csv
+| 0               |                1 |                    2 |                3 |                  4 | 5                                                                |
+| name            |             mean |                  std |              min |                max | conf                                                             |
+| peak_infections |           1607.7 |   54.329826062670215 |           1512.0 |             1721.0 | (np.float64(1592.1028752724171), np.float64(1623.297124727583))  |
+| peak_times      | 95548.3358400622 |    9304.133210121096 | 75886.2527655324 | 121690.99321655945 | (np.float64(92877.28502548918), np.float64(98219.38665463521))   |
+| attack_rates    |         0.908452 | 0.006205521412419749 |           0.8948 |             0.9214 | (np.float64(0.9066705054051609), np.float64(0.9102334945948392)) |
+
+$ python simulation.py skeptic_plot.png skeptic_metrics.csv skeptic_N_S.csv skeptic_N_P.csv skeptic_N_A.csv skeptic_N_Y.csv skeptic_N_R.csv ignorance_time_name.csv -s 0.80 -p 0.80 -a 0.80 -y 0.30
+$ cat ./skeptic_metrics.csv
+| 0               |                  1 |                   2 |                  3 |                 4 | 5                                                                |
+| name            |               mean |                 std |                min |               max | conf                                                             |
+| peak_infections |              618.1 |   56.63717860204549 |              487.0 |             752.0 | (np.float64(601.8404754829234), np.float64(634.3595245170767))   |
+| peak_times      | 183043.46592964712 |   26366.99888389911 | 141785.27822713408 | 254357.7722571604 | (np.float64(175473.9704961474), np.float64(190612.96136314684))  |
+| attack_rates    |           0.641204 | 0.02227233225326885 |             0.5922 |            0.6768 | (np.float64(0.6348100103758165), np.float64(0.6475979896241835)) |
+
+$ python simulation.py infecpop_plot.png infecpop_metrics.csv infecpop_N_S.csv infecpop_N_P.csv infecpop_N_A.csv infecpop_N_Y.csv infecpop_N_R.csv infecpop_time_name.csv -N_Y0 500
+$ cat ./infecpop_metrics.csv
+
+| 0               |                  1 |                    2 |                3 |                 4 | 5                                                                |
+| name            |               mean |                  std |              min |               max | conf                                                             |
+| peak_infections |            1889.76 |    52.01098345542026 |           1788.0 |            1993.0 | (np.float64(1874.828573655607), np.float64(1904.691426344393))   |
+| peak_times      | 39536.204943631106 |   2214.2513855250227 | 35217.0101841283 | 44553.39182111935 | (np.float64(38900.53283604108), np.float64(40171.877051221134))  |
+| attack_rates    | 0.9083520000000002 | 0.006593155238578862 |           0.8948 |            0.9204 | (np.float64(0.9064592226425721), np.float64(0.9102447773574283)) |
