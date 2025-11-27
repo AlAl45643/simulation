@@ -4,6 +4,8 @@ import scipy.stats as stats
 import pandas as pd
 import argparse
 import math
+import sys
+np.set_printoptions(threshold=sys.maxsize)
 
 
 class Simulation:
@@ -425,16 +427,13 @@ class Simulation:
             peak_infections.append(peak_infection)
             peak_times.append(peak_time)
 
-        R0 = ((self.p * self.a * self.y) * self.beta) / \
-            ((self.p_theta * (self.zeta + self.phi)) + (self.a_theta * (self.gamma)))
-
         # calculate attack rate for every cycle
         attack_rates = []
         for i in range(self.cycles):
             attack_rate = (self.N_S0 - min(self.N_S[i])) / self.N_S0
             attack_rates.append(attack_rate)
 
-        return (("name", "mean", "std", "min", "max", "conf"), self.__calculate_stats("peak_infections", peak_infections), self.__calculate_stats("peak_times", peak_times), self.__calculate_stats("attack_rates", attack_rates), ("R0", R0, R0, R0, R0))
+        return (("name", "mean", "std", "min", "max", "conf"), self.__calculate_stats("peak_infections", peak_infections), self.__calculate_stats("peak_times", peak_times), self.__calculate_stats("attack_rates", attack_rates))
 
     def __export_to_csv(self, array, name):
         """Export csv of array as name."""
