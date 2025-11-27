@@ -23,7 +23,7 @@ To install dependencies for this program do the following:
 
 $ python -m venv .venv\
 $ source .venv/bin/activate\
-$ pip install -r requirements\
+$ pip install -r requirements
 
 
 <a id="org4ff40c3"></a>
@@ -71,7 +71,7 @@ options:
 Ensure that you have followed the installation instructions beforehand:\
 Note: Outputs can be slightly different due to stochastic properties.\
 $ python simulation.py plot.png metrics.csv N\_S.csv N\_P.csv N\_A.csv N\_Y.csv N\_R.csv time\_name.csv\
-$ cat ./metrics.csv\
+$ cat ./metrics.csv
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -140,7 +140,7 @@ $ cat ./metrics.csv\
 [Plot of default run](examples/plot.png)
 
 $ python simulation.py skeptic\_plot.png skeptic\_metrics.csv skeptic\_N\_S.csv skeptic\_N\_P.csv skeptic\_N\_A.csv skeptic\_N\_Y.csv skeptic\_N\_R.csv ignorance\_time\_name.csv -s 0.80 -p 0.80 -a 0.80 -y 0.30\
-$ cat ./skeptic\_metrics.csv\
+$ cat ./skeptic\_metrics.csv
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -209,7 +209,7 @@ $ cat ./skeptic\_metrics.csv\
 [Plot of skeptic run](examples/skeptic\_plot.png)
 
 $ python simulation.py infecpop\_plot.png infecpop\_metrics.csv infecpop\_N\_S.csv infecpop\_N\_P.csv infecpop\_N\_A.csv infecpop\_N\_Y.csv infecpop\_N\_R.csv infecpop\_time\_name.csv -N\_Y0 500\
-$ cat ./infecpop\_metrics.csv\
+$ cat ./infecpop\_metrics.csv
 
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
