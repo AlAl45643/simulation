@@ -109,7 +109,7 @@ $ cat ./metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">peak\_infections</td>
+<td class="org-left">peak_infections</td>
 <td class="org-right">1607.7</td>
 <td class="org-right">54.329826062670215</td>
 <td class="org-right">1512.0</td>
@@ -118,7 +118,7 @@ $ cat ./metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">peak\_times</td>
+<td class="org-left">peak_times</td>
 <td class="org-right">95548.3358400622</td>
 <td class="org-right">9304.133210121096</td>
 <td class="org-right">75886.2527655324</td>
@@ -127,7 +127,7 @@ $ cat ./metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">attack\_rates</td>
+<td class="org-left">attack_rates</td>
 <td class="org-right">0.908452</td>
 <td class="org-right">0.006205521412419749</td>
 <td class="org-right">0.8948</td>
@@ -178,7 +178,7 @@ $ cat ./skeptic\_metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">peak\_infections</td>
+<td class="org-left">peak_infections</td>
 <td class="org-right">618.1</td>
 <td class="org-right">56.63717860204549</td>
 <td class="org-right">487.0</td>
@@ -187,7 +187,7 @@ $ cat ./skeptic\_metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">peak\_times</td>
+<td class="org-left">peak_times</td>
 <td class="org-right">183043.46592964712</td>
 <td class="org-right">26366.99888389911</td>
 <td class="org-right">141785.27822713408</td>
@@ -196,7 +196,7 @@ $ cat ./skeptic\_metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">attack\_rates</td>
+<td class="org-left">attack_rates</td>
 <td class="org-right">0.641204</td>
 <td class="org-right">0.02227233225326885</td>
 <td class="org-right">0.5922</td>
@@ -247,7 +247,7 @@ $ cat ./infecpop\_metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">peak\_infections</td>
+<td class="org-left">peak_infections</td>
 <td class="org-right">1889.76</td>
 <td class="org-right">52.01098345542026</td>
 <td class="org-right">1788.0</td>
@@ -256,7 +256,7 @@ $ cat ./infecpop\_metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">peak\_times</td>
+<td class="org-left">peak_times</td>
 <td class="org-right">39536.204943631106</td>
 <td class="org-right">2214.2513855250227</td>
 <td class="org-right">35217.0101841283</td>
@@ -265,7 +265,7 @@ $ cat ./infecpop\_metrics.csv
 </tr>
 
 <tr>
-<td class="org-left">attack\_rates</td>
+<td class="org-left">attack_rates</td>
 <td class="org-right">0.9083520000000002</td>
 <td class="org-right">0.006593155238578862</td>
 <td class="org-right">0.8948</td>
