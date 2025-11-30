@@ -109,7 +109,7 @@ class Simulation:
     def __resize_np_array(self, array):
         """Resize array to double its length inheriting its current values and initializing indexes to 0."""
         pad_size = (int((array.shape[1] - 1) * 2))
-        return np.pad(array, ((0, 0), (0, (pad_size))), 'constant', constant_values=0)
+        return np.pad(array, ((0, 0), (0, (pad_size))), 'edge')
 
     def simulation(self):
         """Simulate the epidemic."""
@@ -292,8 +292,8 @@ class Simulation:
     def __get_avg_and_conf(self):
         """Calculate averages and confidences of results."""
         # Create avg arrays from 0 to max_time with length avg_steps
-        time_max = self.time.max()
-        Time_avg = np.linspace(0, time_max, self.avg_steps)
+        max_time = self.time.max()
+        Time_avg = np.linspace(0, max_time, self.avg_steps)
         N_S_avg = np.zeros(self.avg_steps)
         N_P_avg = np.zeros(self.avg_steps)
         N_A_avg = np.zeros(self.avg_steps)
