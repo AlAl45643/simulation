@@ -1,0 +1,483 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{biblatex}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{placeins}
+\graphicspath{ {./imgs/} {./}} 
+\addbibresource{CS4632_Ali_Ali.bib}
+
+\title{The Effect of Behavioral Changes \\on the Spread of COVID-19}
+\author{Ali Ali}
+\date{November 2025}
+
+\begin{document}
+\maketitle
+\begin{center}
+	A project developed for CS4632 Modeling and Simulation
+	https://github.com/AlAl45643/simulation
+\end{center}
+
+\section{Abstract}
+\section{Table of Contents}
+\section{Introduction}
+\section{Background and Literature Review}
+The approach for modeling our problem was heavily influenced by a few key articles. The first is \textit{A simple model for behavior changes in epidemics} which describes how to model behavior changes.  The second is \textit{A simple model for behavior changes in epidemics} which describes the division of a SEIR model. The third is an article on Model Stochasticity which describes the stochastic model language. The fourth is an online article on the Gillespie Algorithm which describes how to model events following a Poisson distribution using Gillespie. These articles which we shall describe give us a strong background for designing our model.
+\subsubsection{Modeling Behavioral Changes}
+It is self-evident that a large factor of behavioral changes in an individual depends on the status of their infection. Whether or not someone is infected or susceptible to a virus has a large effect on their actions.
+
+To model this we reference \textit{A simple model for behavior changes in epidemics} which describes a modified SIR model. It assumes that susceptible members during an epidemic decrease their rate of contact by a fraction $p, 0 \le p \le 1$, and that infectious members decrease their rate of contact by a fraction $q, 0 \le q \le 1$. This gives us the current in-progress deterministic model.
+\begin{align*}
+	 & S' = -\beta N \frac{pq}{T}SI           \\
+	 & I' = \beta N \frac{pq}{T}SI - \gamma I \\
+	 & R' = \gamma I
+\end{align*}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Symbol       & Description                              \\ [0.5ex]
+		\hline\hline
+		$S', I', R'$ & rate of change of compartment            \\
+		\hline
+		$\beta$      & contact rate                             \\
+		\hline
+		$N$          & population size                          \\
+		\hline
+		$p,q$        & fraction to decrease compartment contact \\
+		\hline
+		$T$          & total rate of contact of components      \\
+		\hline
+		$S, I$       & current rate of compartment              \\
+		\hline
+		$\gamma$     & rate of recovery                         \\
+		\hline
+	\end{tabular}
+	\caption{Symbol descriptions for \textit{A simple model for behavior changes in epidemics} SIR model.}
+\end{table}
+\cite{behavior}
+
+
+\subsubsection{Modeling COVID-19 compartments}
+The conclusion that the status of infection affects a person's behavioral changes, directly leads to the conclusion that the appearance of symptoms is a major factor. This leads us to consider dividing the infectious component into the different types of COVID-19 infections, specifically the components pre-symptomatic, asymptomatic, and symptomatic. These components will mimic their real-world behavior where infection will go from pre-symptomatic to symptomatic to removed and asymptomatic to removed. Furthermore, we must also consider the fact that each state can have a different secondary attack rate when contacting a susceptible person. \cite{review} To model this we will need to take inspiration from the model in \textit{SEIR modeling of the COVID-19 and its dynamics} which models different states by combining the contact and infection rate for each class and multiplying it against its current rate.
+
+\begin{align*}
+	E' = \frac{S}{N} (\beta _1 I_1 + \beta _2 I_2 + \chi E) - \theta _1 E - \theta _2 E
+\end{align*}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l | l |}
+		\hline
+		Variable                 & Description                                                                    \\ [0.5ex]
+		\hline\hline
+		$E'$                     & rate of change of exposed component                                            \\
+		\hline
+		$E$                      & current exposed rate                                                           \\
+		\hline
+		$S$                      & current susceptible rate                                                       \\
+		\hline
+		$N$                      & population                                                                     \\
+		\hline
+		$\beta _1 , \beta _2 $   & the contact and infection rate of transmission per contact from infected class \\
+		\hline
+		$\chi$                   & probability of transmission per contact from exposed individuals               \\
+		\hline
+		$\theta _1 , \theta _2 $ & transition rate of exposed individuals to the infected class                   \\
+		\hline
+	\end{tabular}
+	\caption{Symbol descriptions for \textit{SEIR modeling of the COVID-19 and its dynamics} SEIR model.}
+\end{table}
+\cite{dynamic}
+\FloatBarrier
+% While in the above model contact rate and infection rate were combined, we will separate the general contact rate in our model by putting it outside the parenthesis (replacing beta with kappa). Considering the previous and current conclusions this leads to the current in-progress model:
+% \begin{align*}
+%   & S' = - \frac{s(p+a+y)}{T} \beta S (\kappa _1 P + \kappa _2 A + \kappa _3 Y)                     \\
+%   & P' = \theta _ 1 \frac{s(p+a+y)}{T} \beta S (\kappa _1 P + \kappa _2 A + \kappa _3 Y) - \phi P   \\
+%   & A' = \theta _ 2 \frac{s(p+a+y)}{T} \beta S (\kappa _1 P + \kappa _2 A + \kappa _3 Y) - \gamma A \\
+%   & Y' = \phi P - \zeta Y                                                                           \\
+%   & R' = \zeta Y + \gamma A
+% \end{align*}
+
+% \begin{center}
+%   \begin{tabular}{|l|l|}
+%     \hline
+%     Symbol                 & Description                                                \\ [0.5ex]
+%     \hline\hline
+%     $s, p, a, y$           & rate of contact from component                             \\
+%     \hline
+%     $S, P, A, Y, R$        & rate of population of component                            \\
+%     \hline
+%     $T$                    & $sS+ pP + aA + yY + R$ total rate of contact of components \\
+%     \hline
+%     $\beta$                & population rate of contact                                 \\
+%     \hline
+%     $k_1, k_2, k_3$        & infection rate per contact                                 \\
+%     \hline
+%     $\theta _1 , \theta_2$ & rate of susceptible to infectious class                    \\
+%     \hline
+%     $\phi$                 & rate of pre-symptomatic to symptomatic                     \\
+%     \hline
+%     $\gamma$               & rate of asymptomatic to recovered                          \\
+%     \hline
+%     $\zeta$                & rate of symptomatic to recovered                           \\
+%     \hline
+%   \end{tabular}
+% \end{center}
+
+
+\subsubsection{Modeling as Stochastic Events}
+For this to be a proper model it is required for us to incorporate some stochastic properties. To do this we will need to be able to convert the deterministic models described by the previous articles into event models by converting ordinary differential equations into the stochastic model language through the Model Stochasticity article. \cite{events} We will then need to randomly choose each event based on their propensity at a discrete point in time. We take inspiration from an online article which describes a Gillespie algorithm following a Poisson distribution, which we shall also implement. \cite{gillespie} Both the Model Stochasticity and Gillespie algorithm articles contribute in helping us incorporate stochastic properties.
+
+The articles described have given us an strong background for designing our model. \textit{A simple model for behavior changes in epidemics} allows us to model our behavioral changes as a parameter. \textit{A simple model for behavior changes in epidemics} enables us to divide our components according to COVID-19's characteristics. The Model Stochasticity article lets us convert from deterministic to stochastic models. The Gillespie Algorithm article outlines how to model events following a Poisson distribution. We shall use what we have described here in the design of our model.
+
+\section{Model Design and Architecture}
+Our model has been designed using our background and has been translated into our architecture. This design and architecture will allow us to implement our model in order to sufficiently answer our articles' questions.
+\subsection{Model Design}
+Our model is a stochastic epidemic model that represents COVID-19 to the necessary level for our simulation. It is based on a modified SIR model where the infectious component is divided into (A)symptomatic, a permanent until removal infectious state without symptoms, (P)re-symptomatic, a temporary infectious state without symptoms that transitions to symptomatic, and s(Y)ptomatic, a permanent until removal infectious state with symptoms. Furthermore behavioral changes are modeled as a parameter describing the rate of contact of each component except removed. These rate of contacts are denoted by lower case versions of their infectious components such as $s$ for the susceptible component. This design allows us to sufficiently answer the questions we will ask throughout this article.
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l | l | l |}
+		\hline
+		Event Type                   & Transitions                                    & Propensity                                                                       \\ [0.5ex]
+		\hline\hline
+		Removal of S, Increase in P  & $S \Rightarrow S - 1 \> P \Rightarrow P + 1$   & $\theta _1 \frac{s(p+a+y)}{T} \beta S (\kappa _1 P + \kappa _2 A + \kappa _3 Y)$ \\
+		\hline
+		Removal of S, Increase in A  & $S \Rightarrow S - 1 \> A \rightarrow A + 1$   & $ \theta _2 \frac{s(p+a+y)}{T} \beta S (\kappa _1 P + \kappa _2 A+ \kappa _3 Y)$ \\
+		\hline
+
+		Removal of P, Increase in Y  & $P \Rightarrow P - 1 \> Y \Rightarrow Y + 1$   & $\phi P$                                                                         \\
+		\hline
+		Removal of A, Increase in R1 & $A \Rightarrow A - 1 \> R1 \Rightarrow R1 + 1$ & $\gamma * A$                                                                     \\
+		\hline
+		Removal of Y, Increase in R2 & $Y \Rightarrow Y - 1 \> R2 \Rightarrow R2 + 1$ & $\zeta * Y$                                                                      \\
+		\hline
+	\end{tabular}
+	\caption{Our model in stochastic model language.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		Symbol                 & Description                                                \\ [0.5ex]
+		\hline\hline
+		$s, p, a, y$           & rate of contact from component                             \\
+		\hline
+		$S, P, A, Y, R$        & rate of population of component                            \\
+		\hline
+		$T$                    & $sS+ pP + aA + yY + R$ total rate of contact of components \\
+		\hline
+		$\beta$                & population rate of contact                                 \\
+		\hline
+		$k_1, k_2, k_3$        & infection rate per contact                                 \\
+		\hline
+		$\theta _1 , \theta_2$ & rate of susceptible to infectious class                    \\
+		\hline
+		$\phi$                 & rate of pre-symptomatic to symptomatic                     \\
+		\hline
+		$\gamma$               & rate of asymptomatic to recovered                          \\
+		\hline
+		$\zeta$                & rate of symptomatic to recovered                           \\
+		\hline
+	\end{tabular}
+	\caption{Symbol description for our model.}
+\end{table}
+
+\subsection{Architecture}
+Since we have described our model we can now describe how it is arranged in our implementation. The architecture of our simulation begins with a command line interface that calls def main which instantiates and interacts with the Simulation class. The Simulation class handles all parts of the simulation including exporting data. It is composed of private helper methods beginning with double underscores and public methods which are called from def main. All methods, functions, and classes are described in Figure 1.
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.42]{architecture.png}
+	\caption{Diagram of simulation architecture.}
+\end{figure}
+
+The design of our model and its architecture have allowed us to implement our model in a satisfactory manner. From the stochastic model language description to the architecture diagram, these have given us a great foundation for our implementation.
+\section{Implementation}
+Our implementation leveraged the python ecosystem, implemented stochastic algorithms, and solved multiple challenges. These actions gave us a functioning program that could be used to run many of the scenarios that motivated us to begin this project.
+
+The python ecosystem was essential in implementing our program. Specifically, the Numpy library's multi-dimensional arrays were essential in holding each run's component population over time. On the other hand our calculations employed a mix of the Numpy and Scipy library. Also, Matplotlib helped us in visualizing our simulation with plots. Last, Pandas was used to export our results in the CSV format. Without the Python ecosystem it likely would have been much more difficult to complete our implementation.
+\begin{itemize}
+	\item Numpy==2.3.3
+	\item Matplotlib==3.10.6
+	\item Pandas==2.3.3
+	\item Scipy==1.16.2
+\end{itemize}
+
+
+The core of our implementation depends on the Gillespie algorithm. This is because this algorithm allows us to implement the behavior of our model. Following this algorithm, we create a Simulation instance which initializes our component arrays and behavioral parameter values. Then we begin a Monte-Carlo loop which includes randomly simulating the time to the next event and selecting an event depending on its propensity. This is done by first computing the propensity of each event considering the current values of each component. The total of all events is then used to find the time the next event shall occur according to a Poisson distribution. After we find the time the next event shall occur we randomly select an event depending on its propensity. This ends the Monte-Carlo loop but we still need to update the system by storing our values in the next index of each components' and time's arrays, we also update the array index by one. This cycle is then repeated until the infectious components reach zero. Following these steps allows us to implement the Gillespie algorithm which lets us correctly simulate the behavior of our model.
+\begin{enumerate}
+	\item Initialize the system
+	\item Monte-Carlo
+	      \begin{enumerate}
+		      \item Randomly simulate time to next event
+		      \item Given an event has occurred, randomly select events depending on their propensity
+	      \end{enumerate}
+	\item Update by moving model time forward and updating the state of the system
+	\item Repeat steps 2 and 3 until a stopping criteria is met
+\end{enumerate}
+
+Throughout our implementation we faced multiple challenges. One of these challenges was deciding on how long our simulation should run. We solved this by dynamically increasing our run length until our infectious components reached zero, which ensured that we captured the whole epidemic. Another challenge was calculating the average of the multiple runs completed during a simulation where the same index for each run could correspond to a different simulated time. This was solved by first creating a number of equally distant steps in time to the max time simulated. Then, for each run we found the value either at that point in time or right before that point in time would be passed and averaged all these values. Overall, we believe we tackled these challenges successfully.
+
+Leveraging python libraries such as Numpy, implementing the Gillespie algorithm, and solving challenges such as the run length of our simulation gave us a program that could simulate multiple scenarios. This implementation will allow us to simulate multiple scenarios of the COVID-19 epidemic.
+\section{Experimental Setup}
+We have run a comprehensive amount of simulations in order to measure parameter sensitivity, understand common scenarios, and validate our simulation. For these runs we manipulated the $spay$ behavioral parameters and the initial symptomatic population $N\_Y0$. Furthermore, we have listed the output metrics for each run but not the graphs as it would take too much space. Each run plays a part in helping us analyze the behavioral effect on the COVID-19 epidemic.
+\subsection{Runs}
+\subsubsection{Sensitivity Runs}
+In total five runs were used to measure the sensitivity of our $spay$ and $N\_S0$ parameters. Specifically, the first run is the default run the later parameter runs were measured against. These runs help us understand which parameter has the largest impact on our results.
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean     & Std Dev  & Min      & Max       & Conf                 \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.91     & 0.01     & 0.89     & 0.92      & [0.90, 0.92]         \\
+		\hline
+		Peak Time       & 94832.69 & 10748.34 & 77779.25 & 130613.60 & [91747.03, 97918.34] \\
+		\hline
+		Peak Infections & 1611.44  & 57.12    & 1489.00  & 1738.00   & [1595.04, 1627.84]   \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for default parameters.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean     & Std Dev & Min      & Max       & Conf                 \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.83     & 0.01    & 0.82     & 0.85      & [0.83, 0.84]         \\
+		\hline
+		Peak Time       & 94119.97 & 9338.58 & 77914.14 & 116379.55 & [91439.03, 96800.91] \\
+		\hline
+		Peak Infections & 1319.86  & 49.24   & 1185.00  & 1439.00   & [1305.72, 1334.00]   \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for s parameter sensitivity. Input parameters are s=0.70 and the rest are defaults.}
+\end{table}
+
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.88      & 0.01     & 0.86     & 0.90      & [0.88, 0.89]           \\
+		\hline
+		Peak Time       & 107085.57 & 10936.41 & 87040.14 & 141283.44 & [103945.92, 110225.22] \\
+		\hline
+		Peak Infections & 1423.14   & 54.49    & 1284.0   & 1551.0    & [1407.50, 1438.78]     \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for p parameter sensitivity. Input parameters are p=0.70 and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.88      & 0.01     & 0.86     & 0.89      & [0.88, 0.88]           \\
+		\hline
+		Peak Time       & 107474.60 & 11859.13 & 83763.04 & 152855.54 & [104070.06, 110879.15] \\
+		\hline
+		Peak Infections & 1390.58   & 46.85    & 1310.00  & 1522.00   & [1377.13, 1404.03]     \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for a parameter sensitivity. Input parameters are a=0.70 and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev & Min      & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.89      & 0.01    & 0.87     & 0.91      & [0.88, 0.89]           \\
+		\hline
+		Peak Time       & 108710.06 & 9929.95 & 87939.37 & 130125.35 & [105859.35, 111560.77] \\
+		\hline
+		Peak Infections & 1443.00   & 57.89   & 1325.00  & 1562.00   & [1426.38, 1459.62]     \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for y parameter sensitivity. Input parameters are y=0.70 and the rest are defaults.}
+\end{table}
+
+
+
+\FloatBarrier
+\subsubsection{Scenario Runs}
+Once again five runs were used to simulate likely scenarios for COVID-19. The first is a realistic scenario that tries to set the behavior parameter values to their likely values during the COVID-19 epidemic. The second is a more orderly population scenario with behavior parameters slightly smaller than the realistic scenario. The third scenario is a skeptic scenario with behavior parameters slightly higher than the realistic scenario. The fourth is a high testing scenario with behavior parameters similar to the realistic scenario except that the asymptomatic and pre-symptomatic parameters have values closer to the symptomatic parameter. Finally, the fifth is a mixed skeptic and testing scenario with behavioral parameter values in between the skeptic and testing scenarios. These scenarios give us a better understanding of different COVID-19 outcomes.
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.20      & 0.13     & 0.00     & 0.34      & [0.17, 0.24]           \\
+		\hline
+		Peak Time       & 259700.15 & 186616.70 & 0.00 & 803366.24 & [206125.82, 313274.48] \\
+		\hline
+		Peak Infections & 112.02    & 74.30    & 5.00     & 265.0    & [90.69, 133.35]       \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for realistic scenario. Input parameters are s=0.60, p=0.60, a=0.60, y=0.25, and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.07      & 0.06     & 0.00     & 0.21      & [0.05, 0.09]           \\
+		\hline
+		Peak Time       & 247347.29 & 200534.21 & 0.0 & 849954.19 & [189777.50, 304917.09] \\
+		\hline
+		Peak Infections & 79.78    & 57.49    & 5.0     & 200.0    & [63.28, 96.28]       \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for orderly scenario. Input parameters are s=0.50, p=0.50, a=0.50, y=0.25, and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min    & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.48      & 0.14     & 0.00   & 0.56      & [0.43, 0.52]           \\
+		\hline
+		Peak Time       & 202340.16 & 65182.07 & 0.00 & 343040.80 & [183627.56, 221052.77] \\
+		\hline
+		Peak Infections & 376.02    & 122.17   & 5.0   & 544.0    & [340.95, 411.09]       \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for skeptic scenario. Input parameters are s=0.70, p=0.70, a=0.70, y=0.35, and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min    & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.00      & 0.00     & 0.00   & 0.04      & [0.00, 0.00]           \\
+		\hline
+		Peak Time       & 45793.53 & 74397.92 & 0.0 & 411093.67 & [24435.21, 67151.85] \\
+		\hline
+		Peak Infections & 9.36    & 4.14   & 5.0   & 23.0    & [8.17, 10.55]       \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for high testing scenario. Input parameters are s=0.60, p=0.30, a=0.30, y=0.25, and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev   & Min  & Max        & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.01      & 0.02      & 0.00 & 0.09       & [0.01, 0.02]           \\
+		\hline
+		Peak Time       & 69159.52 & 102781.40 & 0.00 & 538510.30 & [39652.81, 98666.23] \\
+		\hline
+		Peak Infections & 13.52     & 7.62     & 5.00 & 43.00      & [11.33, 15.71]         \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for mixed skeptic and testing scenario. Input parameters are s=0.70, p=0.40, a=0.40, y=0.25, and the rest are defaults.}
+\end{table}
+
+
+\FloatBarrier
+\subsubsection{Validation Runs}
+In order to validate our simulation we ran multiple simulations to test our program. These include realistic validation which is the same as the previous realistic scenario, a isolation validation which tested instant isolation for infectious components, a no contact validation which tested isolation for all components, a increased behavior validation which tested behavior parameters above 1.00, and an increased infectious validation which tested high numbers of the initial infectious population.
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.20      & 0.13     & 0.00     & 0.34      & [0.17, 0.24]           \\
+		\hline
+		Peak Time       & 259700.15 & 186616.70 & 0.00 & 803366.24 & [206125.82, 313274.48] \\
+		\hline
+		Peak Infections & 112.02    & 74.30    & 5.00     & 265.0    & [90.69, 133.35]       \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for realistic validation. Input parameters are s=0.60, p=0.60, a=0.60, y=0.25, and the rest are defaults.}
+\end{table}
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean & Std Dev & Min  & Max  & Conf         \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.00 & 0.00    & 0.00 & 0.00 & [0.00, 0.00] \\
+		\hline
+		Peak Time       & 0.00 & 0.00    & 0.00 & 0.00 & [0.00, 0.00] \\
+		\hline
+		Peak Infections & 5.00 & 0.00    & 5.00 & 5.00 & [5.00, 5.00] \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for isolation validation. Input parameters are s=1.00, p=0.00, a=0.00, y=0.00, and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean & Std Dev & Min  & Max  & Conf         \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.00 & 0.00    & 0.00 & 0.00 & [0.00, 0.00] \\
+		\hline
+		Peak Time       & 0.00 & 0.00    & 0.00 & 0.00 & [0.00, 0.00] \\
+		\hline
+		Peak Infections & 5.00 & 0.00    & 5.00 & 5.00 & [5.00, 5.00] \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for no contact condition testing. Input parameters are s=0.00 p=0.00, a=0.00, y=0.00, and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean     & Std Dev & Min      & Max      & Conf                 \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.99     & 0.00    & 0.99     & 0.99     & [0.99, 0.99]         \\
+		\hline
+		Peak Time       & 58359.73 & 4319.21 & 49662.70 & 68829.95 & [57119.77, 59599.70] \\
+		\hline
+		Peak Infections & 2554.44  & 46.48   & 2435.00  & 2695.00  & [2541.10, 2567.78]   \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for increased behavior condition testing. Input parameters are s=1.50, p=1.50, a=1.50, y=1.50, and the rest are defaults.}
+\end{table}
+
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{|l|l|l|l|l|l|}
+		\hline
+		Metric          & Mean     & Std Dev & Min      & Max      & Conf                 \\ [0.5ex]
+		\hline\hline
+		Attack Rate     & 0.91     & 0.01    & 0.89     & 0.92     & [0.90, 0.91]         \\
+		\hline
+		Peak Time       & 39538.56 & 2490.37 & 34240.66 & 47305.05 & [38823.62, 40253.50] \\
+		\hline
+		Peak Infections & 1873.80  & 51.50   & 1783.0   & 2039.00  & [1859.02, 1888.58]   \\
+		\hline
+	\end{tabular}
+	\caption{Output metrics for increased infected population condition testing. Input parameters are N\_Y0=500 and the rest are defaults.}
+\end{table}
+
+
+\FloatBarrier
+The comprehensive amount of simulations we have run will be important in helping us analyze our simulation.
+\end{document}
