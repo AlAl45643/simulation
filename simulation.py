@@ -5,7 +5,6 @@ import pandas as pd
 import argparse
 import math
 import sys
-np.set_printoptions(threshold=sys.maxsize)
 
 
 class Simulation:
@@ -109,7 +108,7 @@ class Simulation:
     def __resize_np_array(self, array):
         """Resize array to double its length inheriting its current values and initializing indexes to 0."""
         pad_size = (int((array.shape[1] - 1) * 2))
-        return np.pad(array, ((0, 0), (0, (pad_size))), 'edge')
+        return np.pad(array, ((0, 0), (0, (pad_size))), 'constant', constant_values=0)
 
     def simulation(self):
         """Simulate the epidemic."""
@@ -119,7 +118,7 @@ class Simulation:
             j = 0
 
             # run simulation until infectious compartments have reached 0
-            while self.N_P[i, j] + self.N_Y[i, j] + self.N_A[i, j] != 0:
+            while True:
                 # check if arrays have run out of space
                 if j > self.N_S.shape[1] - 2:
                     # resize arrays
@@ -266,10 +265,6 @@ class Simulation:
 
                 # update array index
                 j += 1
-            # ensure N_S, N_R, and time do not have any empty values
-            self.N_S[i, j+1:] = self.N_S[i, j]
-            self.N_R[i, j+1:] = self.N_R[i, j]
-            self.time[i, j+1:] = self.time[i, j]
 
     def __clean_up_conf(self, confs, avgs):
         """Clean up NaNs in confidence intervals by replacing each NaN with its avg."""
