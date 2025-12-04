@@ -471,7 +471,7 @@ if __name__ == '__main__':
     parser.add_argument(
         "-N_S0", type=int, help="initial amount of susceptible population", default=5000)
     parser.add_argument(
-        "-N_P0", type=int, help="initial amount of pre-symptomatic population", default=5)
+        "-N_P0", type=int, help="initial amount of pre-symptomatic population", default=15)
     parser.add_argument(
         "-N_A0", type=int, help="initial amount of asymptomatic population", default=0)
     parser.add_argument(
