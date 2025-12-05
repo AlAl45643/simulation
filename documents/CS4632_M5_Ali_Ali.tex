@@ -223,21 +223,96 @@ Throughout our implementation we faced multiple challenges. One of these challen
 
 Leveraging python libraries such as Numpy, implementing the Gillespie algorithm, and solving challenges such as the run length of our simulation gave us a program that could simulate multiple scenarios. This implementation will allow us to simulate multiple scenarios of the COVID-19 epidemic.
 \section{Experimental Setup}
-We have run a comprehensive amount of simulations in order to measure parameter sensitivity, understand common scenarios, and validate our simulation. For these runs we manipulated the $spay$ behavioral parameters and the initial symptomatic population $N\_Y0$. Furthermore, we have listed the output metrics for each run but not the graphs as it would take too much space. Each run plays a part in helping us analyze the behavioral effect on the COVID-19 epidemic.
-\subsection{Runs}
+We have run a comprehensive amount of simulations in order to measure parameter sensitivity, understand common scenarios, and validate our simulation. Each simulation run plays an important part in helping us analyze the behavioral effect on COVID-19.
+\subsection{Simulation Runs}
+All the simulation runs used for analysis have been organized here in a concise manner. This conciseness means that we have only included the metrics for each run instead of its plots which would have taken up too much space. Throughout these runs we have manipulated the $spay$ behavioral parameters and the initial symptomatic population $N\_Y0$ parameter. If certain parameters are not listed for a run than they take up their default values. Also, each of these runs were executed in a virtual python environment containing all the libraries listed in the implementation. Finally, for a more comprehensive summary
+\begin{table}[!h]
+	\centering
+	\begin{tabular}{| l | l |}
+		\hline
+		Parameter  & Default Value \\ [0.5ex]
+		\hline\hline
+		seed       & 123432        \\
+		\hline
+		N\_S0      & 5000          \\
+		\hline
+		N\_P0      & 15             \\
+		\hline
+		N\_A0      & 0             \\
+		\hline
+		N\_Y0      & 0             \\
+		\hline
+		N\_R0      & 0             \\
+		\hline
+		s          & 1.0           \\
+		\hline
+		p          & 1.0           \\
+		\hline
+		a          & 1.0           \\
+		\hline
+		y          & 1.0           \\
+		\hline
+		cycles     & 50            \\
+		\hline
+		avg\_steps & 50            \\
+		\hline\hline
+	\end{tabular}
+	\caption{The default value for parameters.}
+\end{table}
+
+\begin{tabular}{|l | l | l |}
+	\hline
+	Run Name  & Purpose                                                    & Parameters Changed          \\ [0.5ex]
+	\hline\hline
+	default   & Baseline Parameter Sensitivity                             & All defaults                \\
+	\hline
+	s         & $s$ Parameter Sensitivity                                  & s=0.70                      \\
+	\hline
+	p         & $p$ Parameter Sensitivity                                  & p=0.70                      \\
+	\hline
+	a         & $a$ Parameter Sensitivity                                  & a=0.70                      \\
+	\hline
+	y         & $y$ Parameter Sensitivity                                  & y=0.70                      \\
+	\hline
+	N\_S0     & $N\_S0$ Parameter Sensitivity                              & N\_S0=3500                  \\
+	\hline
+	realistic & Realistic Behavior Change Scenario                         & s=0.60 p=0.60 a=0.60 y=0.25 \\
+	\hline
+	orderly   & Orderly Population Behavior Change Scenario                & s=0.50 p=0.50 a=0.50 y=0.25 \\
+	\hline
+	skeptic   & Skeptic Population Behavior Change Scenario                & s=0.70 p=0.70 a=0.70 y=0.35 \\
+	\hline
+	testing   & Accurate Self-Testing Behavior Change Scenario             & s=0.60 p=0.30 a=0.30 y=0.25 \\
+	\hline
+	skep_test & Mixed Skeptic Self-Testing Behavior Change Scenario        & s=0.70 p=0.40 a=0.40 y=0.25 \\
+	\hline
+	default   & No Change Face Validation                                  & All Defaults                \\
+	\hline
+	realistic & Realistic Face Validation                                  & s=0.60 p=0.60 a=0.60 y=0.25 \\
+	\hline
+	isolation & Isolation Face Validation                                  & s=1.00 p=0.00 a=0.00 y=0.00 \\
+	\hline
+	nocontact & No Contact Extreme Validation                              & s=0.00 p=0.00 a=0.00 y=0.00 \\
+	\hline
+	increased & Increased Contact Extreme Validation                       & s=1.50 p=1.50 a=1.50 y=1.50 \\
+	\hline
+	infecpop  & Increased Initial Infectious Population Extreme Validation & N\_Y0=500 \\
+	\hline\hline
+\end{tabular}
+
 \subsubsection{Sensitivity Runs}
-In total five runs were used to measure the sensitivity of our $spay$ and $N\_S0$ parameters. Specifically, the first run is the default run the later parameter runs were measured against. These runs help us understand which parameter has the largest impact on our results.
+In total five runs were used to measure the sensitivity of our $spay$ and $N\_S0$ parameters. Specifically, the first run is the default run the later parameter runs were measured against. These runs will help us understand which parameter has the largest impact on our results.
 \begin{table}[!h]
 	\centering
 	\begin{tabular}{|l|l|l|l|l|l|}
 		\hline
 		Metric          & Mean     & Std Dev  & Min      & Max       & Conf                 \\ [0.5ex]
 		\hline\hline
-		Attack Rate     & 0.91     & 0.01     & 0.89     & 0.92      & [0.90, 0.92]         \\
+		Attack Rate     & 0.91     & 0.01     & 0.90     & 0.92      & [0.91, 0.91]         \\
 		\hline
-		Peak Time       & 94832.69 & 10748.34 & 77779.25 & 130613.60 & [91747.03, 97918.34] \\
+		Peak Time       & 77473.95 & 4518.47 & 68236.86 & 86511.22 & [76176.78, 78771.12] \\
 		\hline
-		Peak Infections & 1611.44  & 57.12    & 1489.00  & 1738.00   & [1595.04, 1627.84]   \\
+		Peak Infections & 1631.86  & 62.14    & 1498.00  & 1770.00   & [1614.02, 1649.70]   \\
 		\hline
 	\end{tabular}
 	\caption{Output metrics for default parameters.}
@@ -251,9 +326,9 @@ In total five runs were used to measure the sensitivity of our $spay$ and $N\_S0
 		\hline\hline
 		Attack Rate     & 0.83     & 0.01    & 0.82     & 0.85      & [0.83, 0.84]         \\
 		\hline
-		Peak Time       & 94119.97 & 9338.58 & 77914.14 & 116379.55 & [91439.03, 96800.91] \\
+		Peak Time       & 79431.68 & 5351.22 & 70527.98 & 95599.05 & [77895.44, 80967.92] \\
 		\hline
-		Peak Infections & 1319.86  & 49.24   & 1185.00  & 1439.00   & [1305.72, 1334.00]   \\
+		Peak Infections & 1331.52  & 53.91   & 1206.00  & 1424.00   & [1316.04, 1347.00]   \\
 		\hline
 	\end{tabular}
 	\caption{Output metrics for s parameter sensitivity. Input parameters are s=0.70 and the rest are defaults.}
@@ -266,11 +341,11 @@ In total five runs were used to measure the sensitivity of our $spay$ and $N\_S0
 		\hline
 		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
 		\hline\hline
-		Attack Rate     & 0.88      & 0.01     & 0.86     & 0.90      & [0.88, 0.89]           \\
+		Attack Rate     & 0.88      & 0.01     & 0.86     & 0.90      & [0.88, 0.88]           \\
 		\hline
-		Peak Time       & 107085.57 & 10936.41 & 87040.14 & 141283.44 & [103945.92, 110225.22] \\
+		Peak Time       & 86511.72 & 6403.72 & 75863.07 & 108215.33 & [86551.72, 90228.50] \\
 		\hline
-		Peak Infections & 1423.14   & 54.49    & 1284.0   & 1551.0    & [1407.50, 1438.78]     \\
+		Peak Infections & 1412.14   & 54.98    & 1308.00   & 1569.00    & [1396.36, 1427.92]     \\
 		\hline
 	\end{tabular}
 	\caption{Output metrics for p parameter sensitivity. Input parameters are p=0.70 and the rest are defaults.}
@@ -282,11 +357,11 @@ In total five runs were used to measure the sensitivity of our $spay$ and $N\_S0
 		\hline
 		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
 		\hline\hline
-		Attack Rate     & 0.88      & 0.01     & 0.86     & 0.89      & [0.88, 0.88]           \\
+		Attack Rate     & 0.88      & 0.01     & 0.86     & 0.90      & [0.88, 0.88]           \\
 		\hline
-		Peak Time       & 107474.60 & 11859.13 & 83763.04 & 152855.54 & [104070.06, 110879.15] \\
+		Peak Time       & 88584.59 & 6408.03 & 72494.95 & 102771.02 & [86744.96, 90424.22] \\
 		\hline
-		Peak Infections & 1390.58   & 46.85    & 1310.00  & 1522.00   & [1377.13, 1404.03]     \\
+		Peak Infections & 1398.20   & 58.09    & 1285.00  & 1545.00   & [1381.52, 1414.88]     \\
 		\hline
 	\end{tabular}
 	\caption{Output metrics for a parameter sensitivity. Input parameters are a=0.70 and the rest are defaults.}
@@ -298,32 +373,31 @@ In total five runs were used to measure the sensitivity of our $spay$ and $N\_S0
 		\hline
 		Metric          & Mean      & Std Dev & Min      & Max       & Conf                   \\ [0.5ex]
 		\hline\hline
-		Attack Rate     & 0.89      & 0.01    & 0.87     & 0.91      & [0.88, 0.89]           \\
+		Attack Rate     & 0.89      & 0.01    & 0.87     & 0.90      & [0.88, 0.89]           \\
 		\hline
-		Peak Time       & 108710.06 & 9929.95 & 87939.37 & 130125.35 & [105859.35, 111560.77] \\
+		Peak Time       & 90261.35 & 5426.53 & 76324.10 & 103593.88 & [88703.49, 91819.21] \\
 		\hline
-		Peak Infections & 1443.00   & 57.89   & 1325.00  & 1562.00   & [1426.38, 1459.62]     \\
+		Peak Infections & 1434.66   & 53.83   & 1309.00  & 1566.00   & [1419.20, 1450.12]     \\
 		\hline
 	\end{tabular}
 	\caption{Output metrics for y parameter sensitivity. Input parameters are y=0.70 and the rest are defaults.}
 \end{table}
 
 
-
 \FloatBarrier
 \subsubsection{Scenario Runs}
-Once again five runs were used to simulate likely scenarios for COVID-19. The first is a realistic scenario that tries to set the behavior parameter values to their likely values during the COVID-19 epidemic. The second is a more orderly population scenario with behavior parameters slightly smaller than the realistic scenario. The third scenario is a skeptic scenario with behavior parameters slightly higher than the realistic scenario. The fourth is a high testing scenario with behavior parameters similar to the realistic scenario except that the asymptomatic and pre-symptomatic parameters have values closer to the symptomatic parameter. Finally, the fifth is a mixed skeptic and testing scenario with behavioral parameter values in between the skeptic and testing scenarios. These scenarios give us a better understanding of different COVID-19 outcomes.
+Once again five runs were used to simulate likely scenarios for COVID-19. The first is a realistic scenario that tries to set the behavior parameter values to their likely values during the COVID-19 epidemic. The second is a more orderly population scenario with behavior parameters slightly smaller than the realistic scenario. The third scenario is a skeptic scenario with behavior parameters slightly higher than the realistic scenario. The fourth is a high testing scenario with behavior parameters similar to the realistic scenario except that the asymptomatic and pre-symptomatic parameters have values closer to their symptomatic parameter. Finally, the fifth is a mixed skeptic and testing scenario with behavioral parameter values in between the skeptic and testing scenarios. These scenarios will give us a better understanding of different COVID-19 outcomes.
 \begin{table}[!h]
 	\centering
 	\begin{tabular}{|l|l|l|l|l|l|}
 		\hline
-		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		Metric          & Mean      & Std Dev   & Min  & Max       & Conf                   \\ [0.5ex]
 		\hline\hline
-		Attack Rate     & 0.20      & 0.13     & 0.00     & 0.34      & [0.17, 0.24]           \\
+		Attack Rate     & 0.30      & 0.04      & 0.19 & 0.      & [0.17, 0.24]           \\
 		\hline
 		Peak Time       & 259700.15 & 186616.70 & 0.00 & 803366.24 & [206125.82, 313274.48] \\
 		\hline
-		Peak Infections & 112.02    & 74.30    & 5.00     & 265.0    & [90.69, 133.35]       \\
+		Peak Infections & 112.02    & 74.30     & 5.00 & 265.0     & [90.69, 133.35]        \\
 		\hline
 	\end{tabular}
 	\caption{Output metrics for realistic scenario. Input parameters are s=0.60, p=0.60, a=0.60, y=0.25, and the rest are defaults.}
@@ -333,13 +407,13 @@ Once again five runs were used to simulate likely scenarios for COVID-19. The fi
 	\centering
 	\begin{tabular}{|l|l|l|l|l|l|}
 		\hline
-		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		Metric          & Mean      & Std Dev   & Min  & Max       & Conf                   \\ [0.5ex]
 		\hline\hline
-		Attack Rate     & 0.07      & 0.06     & 0.00     & 0.21      & [0.05, 0.09]           \\
+		Attack Rate     & 0.07      & 0.06      & 0.00 & 0.21      & [0.05, 0.09]           \\
 		\hline
-		Peak Time       & 247347.29 & 200534.21 & 0.0 & 849954.19 & [189777.50, 304917.09] \\
+		Peak Time       & 247347.29 & 200534.21 & 0.0  & 849954.19 & [189777.50, 304917.09] \\
 		\hline
-		Peak Infections & 79.78    & 57.49    & 5.0     & 200.0    & [63.28, 96.28]       \\
+		Peak Infections & 79.78     & 57.49     & 5.0  & 200.0     & [63.28, 96.28]         \\
 		\hline
 	\end{tabular}
 	\caption{Output metrics for orderly scenario. Input parameters are s=0.50, p=0.50, a=0.50, y=0.25, and the rest are defaults.}
@@ -349,13 +423,13 @@ Once again five runs were used to simulate likely scenarios for COVID-19. The fi
 	\centering
 	\begin{tabular}{|l|l|l|l|l|l|}
 		\hline
-		Metric          & Mean      & Std Dev  & Min    & Max       & Conf                   \\ [0.5ex]
+		Metric          & Mean      & Std Dev  & Min  & Max       & Conf                   \\ [0.5ex]
 		\hline\hline
-		Attack Rate     & 0.48      & 0.14     & 0.00   & 0.56      & [0.43, 0.52]           \\
+		Attack Rate     & 0.48      & 0.14     & 0.00 & 0.56      & [0.43, 0.52]           \\
 		\hline
 		Peak Time       & 202340.16 & 65182.07 & 0.00 & 343040.80 & [183627.56, 221052.77] \\
 		\hline
-		Peak Infections & 376.02    & 122.17   & 5.0   & 544.0    & [340.95, 411.09]       \\
+		Peak Infections & 376.02    & 122.17   & 5.0  & 544.0     & [340.95, 411.09]       \\
 		\hline
 	\end{tabular}
 	\caption{Output metrics for skeptic scenario. Input parameters are s=0.70, p=0.70, a=0.70, y=0.35, and the rest are defaults.}
@@ -365,13 +439,13 @@ Once again five runs were used to simulate likely scenarios for COVID-19. The fi
 	\centering
 	\begin{tabular}{|l|l|l|l|l|l|}
 		\hline
-		Metric          & Mean      & Std Dev  & Min    & Max       & Conf                   \\ [0.5ex]
+		Metric          & Mean     & Std Dev  & Min  & Max       & Conf                 \\ [0.5ex]
 		\hline\hline
-		Attack Rate     & 0.00      & 0.00     & 0.00   & 0.04      & [0.00, 0.00]           \\
+		Attack Rate     & 0.00     & 0.00     & 0.00 & 0.04      & [0.00, 0.00]         \\
 		\hline
-		Peak Time       & 45793.53 & 74397.92 & 0.0 & 411093.67 & [24435.21, 67151.85] \\
+		Peak Time       & 45793.53 & 74397.92 & 0.0  & 411093.67 & [24435.21, 67151.85] \\
 		\hline
-		Peak Infections & 9.36    & 4.14   & 5.0   & 23.0    & [8.17, 10.55]       \\
+		Peak Infections & 9.36     & 4.14     & 5.0  & 23.0      & [8.17, 10.55]        \\
 		\hline
 	\end{tabular}
 	\caption{Output metrics for high testing scenario. Input parameters are s=0.60, p=0.30, a=0.30, y=0.25, and the rest are defaults.}
@@ -381,13 +455,13 @@ Once again five runs were used to simulate likely scenarios for COVID-19. The fi
 	\centering
 	\begin{tabular}{|l|l|l|l|l|l|}
 		\hline
-		Metric          & Mean      & Std Dev   & Min  & Max        & Conf                   \\ [0.5ex]
+		Metric          & Mean     & Std Dev   & Min  & Max       & Conf                 \\ [0.5ex]
 		\hline\hline
-		Attack Rate     & 0.01      & 0.02      & 0.00 & 0.09       & [0.01, 0.02]           \\
+		Attack Rate     & 0.01     & 0.02      & 0.00 & 0.09      & [0.01, 0.02]         \\
 		\hline
 		Peak Time       & 69159.52 & 102781.40 & 0.00 & 538510.30 & [39652.81, 98666.23] \\
 		\hline
-		Peak Infections & 13.52     & 7.62     & 5.00 & 43.00      & [11.33, 15.71]         \\
+		Peak Infections & 13.52    & 7.62      & 5.00 & 43.00     & [11.33, 15.71]       \\
 		\hline
 	\end{tabular}
 	\caption{Output metrics for mixed skeptic and testing scenario. Input parameters are s=0.70, p=0.40, a=0.40, y=0.25, and the rest are defaults.}
@@ -396,19 +470,19 @@ Once again five runs were used to simulate likely scenarios for COVID-19. The fi
 
 \FloatBarrier
 \subsubsection{Validation Runs}
-In order to validate our simulation we ran multiple simulations to test our program. These include realistic validation which is the same as the previous realistic scenario, a isolation validation which tested instant isolation for infectious components, a no contact validation which tested isolation for all components, a increased behavior validation which tested behavior parameters above 1.00, and an increased infectious validation which tested high numbers of the initial infectious population.
+We have run multiple simulations in order to validate our program. These include realistic validation which is the same as the previous realistic scenario, an isolation validation which tested immediate isolation for infectious components, a no contact validation which tested immediate isolation for all components, an increased behavior validation which tested behavior parameters above 1.00, and an increased infectious population validation which tested large initial values for the infectious population.
 
 \begin{table}[!h]
 	\centering
 	\begin{tabular}{|l|l|l|l|l|l|}
 		\hline
-		Metric          & Mean      & Std Dev  & Min      & Max       & Conf                   \\ [0.5ex]
+		Metric          & Mean      & Std Dev   & Min  & Max       & Conf                   \\ [0.5ex]
 		\hline\hline
-		Attack Rate     & 0.20      & 0.13     & 0.00     & 0.34      & [0.17, 0.24]           \\
+		Attack Rate     & 0.24      & 0.11      & 0.00 & 0.35      & [0.21, 0.27]           \\
 		\hline
-		Peak Time       & 259700.15 & 186616.70 & 0.00 & 803366.24 & [206125.82, 313274.48] \\
+		Peak Time       & 248909.43 & 131228.58 & 0.00 & 574217.80 & [211236.04, 286582.81] \\
 		\hline
-		Peak Infections & 112.02    & 74.30    & 5.00     & 265.0    & [90.69, 133.35]       \\
+		Peak Infections & 132.96    & 64.02     & 5.00 & 248.00    & [114.58, 151.33]       \\
 		\hline
 	\end{tabular}
 	\caption{Output metrics for realistic validation. Input parameters are s=0.60, p=0.60, a=0.60, y=0.25, and the rest are defaults.}
@@ -479,5 +553,5 @@ In order to validate our simulation we ran multiple simulations to test our prog
 
 
 \FloatBarrier
-The comprehensive amount of simulations we have run will be important in helping us analyze our simulation.
+The comprehensive amount of simulations we have run will be essential in analyzing the behavioral effect on the COVID-19 epidemic.
 \end{document}
