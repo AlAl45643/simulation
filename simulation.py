@@ -108,7 +108,7 @@ class Simulation:
     def __resize_np_array(self, array):
         """Resize array to double its length inheriting its current values and initializing indexes to 0."""
         pad_size = (int((array.shape[1] - 1) * 2))
-        return np.pad(array, ((0, 0), (0, (pad_size))), 'constant', constant_values=0)
+        return np.pad(array, ((0, 0), (0, (pad_size))), 'edge')
 
     def simulation(self):
         """Simulate the epidemic."""
@@ -215,10 +215,11 @@ class Simulation:
                 event_rate = P + A + Y + R_1 + R_2
 
                 # if virus is dead replace rest of the array with last event value
-                # infectious arrays do not need to be modified as no events means
-                # infectious population is already zero
                 if event_rate == 0:
                     self.N_S[i, j+1:] = self.N_S[i, j]
+                    self.N_P[i, j+1:] = self.N_P[i, j]
+                    self.N_A[i, j+1:] = self.N_A[i, j]
+                    self.N_Y[i, j+1:] = self.N_Y[i, j]
                     self.N_R[i, j+1:] = self.N_R[i, j]
                     self.time[i, j+1:] = self.time[i, j]
                     break
@@ -265,6 +266,7 @@ class Simulation:
 
                 # update array index
                 j += 1
+            # ensure arrays have no zeros
 
     def __clean_up_conf(self, confs, avgs):
         """Clean up NaNs in confidence intervals by replacing each NaN with its avg."""
