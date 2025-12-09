@@ -17,16 +17,17 @@
 	A project developed for CS4632 Modeling and Simulation
 	https://github.com/AlAl45643/simulation
 \end{center}
-
 \section{Abstract}
-\section{Table of Contents}
+This article describes the development and results of a stochastic SPAYR COVID model that simulates the effect of behavioral changes on a population. The model is based on the SIR model but divides the infectious component into pre-symptomatic, asymptomatic, and symptomatic compartments to accurately model COVID-19. Furthermore, it gives each compartment except removed a parameter that measures the fractional reduction of contacts during an epidemic. We find that the behavior of the non-symptomatic proportion of the population has a large effect on the epidemic. Furthermore, on average asymptomatic's behavioral parameter is the most influential while susceptible's behavioral parameter is the most important parameter for most of our metrics. Our article contributes to a better understanding of COVID-19, and the model's simplicity allows users to easily understand it which can lead to improved behavior during future epidemics.
+\tableofcontents
 \section{Introduction}
+Our motivation for this article began during the COVID-19 epidemic where we observed and imitated the behavior of others. We wanted to understand the impact of these behaviors on ourselves and the population as a whole. Specifically, how do behavioral changes affect the spread of COVID-19? What behavioral changes can contain the spread of COVID-19? To accomplish that we set out to create a model accurate enough to answer our questions. This article contains our research and it is divided into seven sections not including the previous sections and this section. These seven sections are Background and Literature Review, Model Design and Architecture, Implementation, Experimental Setup, Results Analysis, Validation, Discussion, and Conclusion.
 \section{Background and Literature Review}
-The approach for modeling our problem was heavily influenced by a few key articles. The first is \textit{A simple model for behavior changes in epidemics} which describes how to model behavior changes.  The second is \textit{A simple model for behavior changes in epidemics} which describes the division of a SEIR model. The third is an article on Model Stochasticity which describes the stochastic model language. The fourth is an online article on the Gillespie Algorithm which describes how to model events following a Poisson distribution using Gillespie. These articles which we shall describe give us a strong background for designing our model.
+The approach for modeling our problem was heavily influenced by a few key articles. The first is \textit{A simple model for behavior changes in epidemics} which describes how to model behavior changes.  The second is \textit{SEIR modeling of the COVID-19 and its dynamics} which describes the division of a SEIR model. The third is an article on Model Stochasticity which describes the stochastic model language. The fourth is an online article on the Gillespie Algorithm which describes how to model events following a Poisson distribution using Gillespie. These articles which we shall describe give us a strong background for designing our model.
 \subsubsection{Modeling Behavioral Changes}
 It is self-evident that a large factor of behavioral changes in an individual depends on the status of their infection. Whether or not someone is infected or susceptible to a virus has a large effect on their actions.
-
-To model this we reference \textit{A simple model for behavior changes in epidemics} which describes a modified SIR model. It assumes that susceptible members during an epidemic decrease their rate of contact by a fraction $p, 0 \le p \le 1$, and that infectious members decrease their rate of contact by a fraction $q, 0 \le q \le 1$. This gives us the current in-progress deterministic model.
+\par
+To model this we reference \textit{A simple model for behavior changes in epidemics} which describes a modified SIR model. It assumes that susceptible members during an epidemic decrease their rate of contact by a fraction $p, 0 \le p \le 1$, and that infectious members decrease their rate of contact by a fraction $q, 0 \le q \le 1$. This gives us the current deterministic model.
 \begin{align*}
 	 & S' = -\beta N \frac{pq}{T}SI           \\
 	 & I' = \beta N \frac{pq}{T}SI - \gamma I \\
@@ -91,49 +92,12 @@ The conclusion that the status of infection affects a person's behavioral change
 \end{table}
 \cite{dynamic}
 \FloatBarrier
-% While in the above model contact rate and infection rate were combined, we will separate the general contact rate in our model by putting it outside the parenthesis (replacing beta with kappa). Considering the previous and current conclusions this leads to the current in-progress model:
-% \begin{align*}
-%   & S' = - \frac{s(p+a+y)}{T} \beta S (\kappa _1 P + \kappa _2 A + \kappa _3 Y)                     \\
-%   & P' = \theta _ 1 \frac{s(p+a+y)}{T} \beta S (\kappa _1 P + \kappa _2 A + \kappa _3 Y) - \phi P   \\
-%   & A' = \theta _ 2 \frac{s(p+a+y)}{T} \beta S (\kappa _1 P + \kappa _2 A + \kappa _3 Y) - \gamma A \\
-%   & Y' = \phi P - \zeta Y                                                                           \\
-%   & R' = \zeta Y + \gamma A
-% \end{align*}
-
-% \begin{center}
-%   \begin{tabular}{|l|l|}
-%     \hline
-%     Symbol                 & Description                                                \\ [0.5ex]
-%     \hline\hline
-%     $s, p, a, y$           & rate of contact from component                             \\
-%     \hline
-%     $S, P, A, Y, R$        & rate of population of component                            \\
-%     \hline
-%     $T$                    & $sS+ pP + aA + yY + R$ total rate of contact of components \\
-%     \hline
-%     $\beta$                & population rate of contact                                 \\
-%     \hline
-%     $k_1, k_2, k_3$        & infection rate per contact                                 \\
-%     \hline
-%     $\theta _1 , \theta_2$ & rate of susceptible to infectious class                    \\
-%     \hline
-%     $\phi$                 & rate of pre-symptomatic to symptomatic                     \\
-%     \hline
-%     $\gamma$               & rate of asymptomatic to recovered                          \\
-%     \hline
-%     $\zeta$                & rate of symptomatic to recovered                           \\
-%     \hline
-%   \end{tabular}
-% \end{center}
-
-
 \subsubsection{Modeling as Stochastic Events}
-For this to be a proper model it is required for us to incorporate some stochastic properties. To do this we will need to be able to convert the deterministic models described by the previous articles into event models by converting ordinary differential equations into the stochastic model language through the Model Stochasticity article. \cite{events} We will then need to randomly choose each event based on their propensity at a discrete point in time. We take inspiration from an online article which describes a Gillespie algorithm following a Poisson distribution, which we shall also implement. \cite{gillespie} Both the Model Stochasticity and Gillespie algorithm articles contribute in helping us incorporate stochastic properties.
-
-The articles described have given us an strong background for designing our model. \textit{A simple model for behavior changes in epidemics} allows us to model our behavioral changes as a parameter. \textit{A simple model for behavior changes in epidemics} enables us to divide our components according to COVID-19's characteristics. The Model Stochasticity article lets us convert from deterministic to stochastic models. The Gillespie Algorithm article outlines how to model events following a Poisson distribution. We shall use what we have described here in the design of our model.
+For this to be a proper model it is required for us to incorporate some stochastic properties. To do this we will need to be able to convert the deterministic models described by the previous articles into event models by converting ordinary differential equations into the stochastic model language through the Model Stochasticity article. \cite{events} We will then need to randomly choose each event based on their propensity at a discrete point in time. We take inspiration from an online article which describes a Gillespie algorithm following a Poisson distribution, which we shall also implement. \cite{gillespie} Both the Model Stochasticity and Gillespie algorithm articles contribute in helping us incorporate stochastic properties.\par
+The articles described have given us an strong background for designing our model. \textit{A simple model for behavior changes in epidemics} allows us to model our behavioral changes as a parameter. \textit{SEIR modeling of the COVID-19 and its dynamics} enables us to divide our components according to COVID-19's characteristics. The Model Stochasticity article lets us convert from deterministic to stochastic models. The Gillespie Algorithm article outlines how to model events following a Poisson distribution. We shall use what we have described here in the design of our model.
 
 \section{Model Design and Architecture}
-Our model has been designed using our background and has been translated into our architecture. This design and architecture will allow us to implement our model in order to sufficiently answer our articles' questions.
+Our model has been designed using our background and has been translated into our architecture. This design and architecture will allow us to implement our model in order to sufficiently answer our articles' questions.\par
 Our model is a stochastic epidemic model that represents COVID-19 to the necessary level for our simulation. It is based on a modified SIR model where the infectious component is divided into (A)symptomatic, a permanent until removal infectious state without symptoms, (P)re-symptomatic, a temporary infectious state without symptoms that transitions to symptomatic, and s(Y)ptomatic, a permanent until removal infectious state with symptoms. Furthermore behavioral changes are modeled as a parameter describing the rate of contact of each component except removed. These rate of contacts are denoted by lower case versions of their infectious components such as $s$ for the susceptible component. This design allows us to sufficiently answer the questions we will ask throughout this article.
 
 \begin{table}[!h]
@@ -149,9 +113,9 @@ Our model is a stochastic epidemic model that represents COVID-19 to the necessa
 
 		Removal of P, Increase in Y  & $P \Rightarrow P - 1 \> Y \Rightarrow Y + 1$   & $\phi P$                                                                         \\
 		\hline
-		Removal of A, Increase in R1 & $A \Rightarrow A - 1 \> R1 \Rightarrow R1 + 1$ & $\gamma * A$                                                                     \\
+		Removal of A, Increase in R1 & $A \Rightarrow A - 1 \> R1 \Rightarrow R1 + 1$ & $\gamma A$                                                                     \\
 		\hline
-		Removal of Y, Increase in R2 & $Y \Rightarrow Y - 1 \> R2 \Rightarrow R2 + 1$ & $\zeta * Y$                                                                      \\
+		Removal of Y, Increase in R2 & $Y \Rightarrow Y - 1 \> R2 \Rightarrow R2 + 1$ & $\zeta Y$                                                                      \\
 		\hline
 	\end{tabular}
 	\caption{Our model in stochastic model language.}
@@ -186,7 +150,7 @@ Our model is a stochastic epidemic model that represents COVID-19 to the necessa
 \end{table}
 
 \subsection{Architecture}
-Since we have described our model we can now describe how it is arranged in our implementation. The architecture of our simulation begins with a command line interface that calls def main which instantiates and interacts with the Simulation class. The Simulation class handles all parts of the simulation including exporting data. It is composed of private helper methods beginning with double underscores and public methods which are called from def main. All methods, functions, and classes are described in Figure 1.
+Since we have described our model we can now describe how it is arranged in our implementation. The architecture of our simulation begins with a command line interface that calls def main which instantiates and interacts with the Simulation class. The Simulation class handles all parts of the simulation including exporting data. It is composed of private helper methods beginning with double underscores and public methods which are called from def main. All methods, functions, and classes are described in Figure 1. \par
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.42]{architecture.png}
@@ -195,10 +159,10 @@ Since we have described our model we can now describe how it is arranged in our 
 
 The design of our model and its architecture have allowed us to implement our model in a satisfactory manner. From the stochastic model language description to the architecture diagram, these have given us a great foundation for our implementation.
 \section{Implementation}
-Our implementation leveraged the python ecosystem, implemented stochastic algorithms, and solved multiple challenges. These actions gave us a functioning program that could be used to run many of the scenarios that motivated us to begin this project.
+Our implementation leveraged the python ecosystem, implemented stochastic algorithms, and solved multiple challenges. These actions gave us a functioning program that could be used to run valuable scenarios for analyzing COVID-19.
 
 \subsection{Technologies Used}
-The python ecosystem was essential in implementing our program. Specifically, the Numpy library's multi-dimensional arrays were essential in holding each run's component population over time. On the other hand our calculations employed a mix of the Numpy and Scipy library. Also, Matplotlib helped us in visualizing our simulation with plots. Last, Pandas was used to export our results in the CSV format. Without the Python ecosystem it likely would have been much more difficult to complete our implementation.
+The Python ecosystem was essential in implementing our program. Specifically, the Numpy library's multi-dimensional arrays were essential in holding each run's component population over time. On the other hand our calculations employed a mix of the Numpy and Scipy library. Also, Matplotlib helped us in visualizing our simulation with its plots. Last, Pandas was used to export our results in the CSV format. Without the Python ecosystem it would have been much more difficult to complete our implementation.
 \begin{itemize}
 	\item Numpy==2.3.3
 	\item Matplotlib==3.10.6
@@ -220,11 +184,12 @@ The core of our implementation depends on the Gillespie algorithm. This is becau
 \end{enumerate}
 
 \subsection{Challenges Overcome}
-Throughout our implementation we faced multiple challenges. One of these challenges was deciding on how long our simulation should run. We solved this by dynamically increasing our run length until our infectious components reached zero, which ensured that we captured the whole epidemic. Another challenge was calculating the average of the multiple runs completed during a simulation where the same index for each run could correspond to a different simulated time. This was solved by first creating a number of equally distant steps in time to the max time simulated. Then, for each run we found the value either at that point in time or right before that point in time would be passed and averaged all these values. Overall, we believe we tackled these challenges successfully.
+Throughout our implementation we faced multiple challenges. One of these challenges was deciding on how long our simulation should run. We solved this by dynamically increasing our run length until our infectious components reached zero, which ensured that we captured the whole epidemic. Another challenge was calculating the average of the multiple runs completed during a simulation where the same index for each run could correspond to a different simulated time. This was solved by first creating a number of equally distant steps in time to the max time simulated. Then, for each run we found the value either at that point in time or right before that point in time would be passed and averaged all these values. Overall, we believe we tackled these challenges successfully. \par
 
-Leveraging python libraries such as Numpy, implementing the Gillespie algorithm, and solving challenges such as the run length of our simulation gave us a program that could simulate multiple scenarios. This implementation will allow us to simulate multiple scenarios of the COVID-19 epidemic.
+Leveraging python libraries such as Numpy, implementing the Gillespie algorithm, and solving challenges such as the run length of our simulation gave us a functioning program. This implementation will allow us to simulate multiple valuable scenarios for the COVID-19 epidemic.
 \section{Experimental Setup}
-We have run a comprehensive amount of simulations in order to measure parameter sensitivity, understand common scenarios, and validate our simulation. Each simulation plays an important part in helping us analyze the behavioral effect on COVID-19. \\ All the simulation runs used for analysis have been organized here in a concise manner. In order to understand the effect of behavior changes on COVID-19 our runs have mostly manipulated the $spay$ behavioral parameters though there are some runs that manipulate the initial populations for validation. If certain parameters are not listed for a run than they take up their default values. The parameters and purpose of each simulation is described in Table 5 and Table 6.
+We have run a comprehensive amount of simulations in order to measure parameter sensitivity, understand common scenarios, and validate our simulation. Each simulation plays an important part in helping us analyze the behavioral effect on COVID-19.\par
+All simulation runs used for analysis have been organized here in a concise manner. In order to understand the effect of behavior changes on COVID-19 our runs have mostly manipulated the $spay$ behavioral parameters though there are some runs that manipulate the initial populations for validation. If certain parameters are not listed for a run than they take up their default values. The parameters and purpose of each simulation is described in Table 5 and Table 6. \par
 \begin{table}[!h]
 	\centering
 	\begin{tabular}{| l | l |}
@@ -283,7 +248,7 @@ We have run a comprehensive amount of simulations in order to measure parameter 
 		\hline
 		testing   & High Self-Testing Population Scenario              & s=0.50 p=0.40 a=0.40 y=0.30 \\
 		\hline
-		skep_test & Mixed Skeptic Self-Testing Population Scenario     & s=0.60 p=0.40 a=0.40 y=0.30 \\
+		skep\_test & Mixed Skeptic Self-Testing Population Scenario     & s=0.55 p=0.50 a=0.50 y=0.30 \\
 		\hline
 		default   & No Change Face Validation                          & All Defaults                \\
 		\hline
@@ -299,7 +264,7 @@ We have run a comprehensive amount of simulations in order to measure parameter 
 	\caption{Summary of simulation runs.}
 \end{table}
 \FloatBarrier
-For each simulation we have organized its output. Its outputs consists of summary plots, summary metrics, time series arrays of each component, and a time series of time for every component. These are listed in detail in Table 7.
+For each simulation we have organized its output. Its outputs consists of summary plots, summary metrics, time series arrays of each component, and the array of time for every component. These are listed in detail in Table 7. \par
 \begin{table}[!h]
 	\centering
 	\begin{tabular}{| l | l | l | l |}
@@ -331,7 +296,7 @@ The comprehensive amount of simulations we have run will be essential in analyzi
 \section{Results Analysis}
 Our results reveal valuable insights on the effect of behavior changes on COVID-19. These results affect our understanding and the discussion of policy for COVID. We first analyze the sensitivity of each behavioral parameter and examine likely scenarios. The analysis of these results give us a better understanding of behavior changes for COVID-19.
 \subsection{Sensitivity Analysis}
-To best understand our simulation we need to measure which behavioral parameters affect our output the most. Specifically, we will measure the sensitivity of $s$, $p$, $a$, and $y$ for the attack rate, peak time of infections, and peak infection metrics. We will measure the sensitivity by using the calculation method $ \frac{\% change in output}{\% change in input}$. The sensitivity analysis of our behavioral parameters will help us understand which parameter is the most important. 
+To best understand our simulation we need to measure which behavioral parameters affect our output the most. Specifically, we will measure the sensitivity of $s$, $p$, $a$, and $y$ for the attack rate, peak time of infections, and peak infection metrics. We will measure the sensitivity by using the calculation method $ \frac{\% change in output}{\% change in input}$. The sensitivity analysis of our behavioral parameters will help us understand which parameter is the most important. \par
 \begin{table}[!h]
 	\centering
 	\begin{tabular}{|l|l|}
@@ -403,19 +368,19 @@ To best understand our simulation we need to measure which behavioral parameters
 	\caption{Average of each sensitivity for attack rate, peak infection time, and peak infections. Notice that $a$ leads by only a small amount.}
 \end{table}
 
+\FloatBarrier
 Our sensitivity analysis has generated some interesting results. We first see that each parameter has varying sensitivity depending on the metric measured. Some metrics such as $s$ for attack rate and $s$ for peak infection time can be the highest in one metric and the lowest in another. Another interesting result is that $a$ has the highest affect on peak infections even though it is the least infectious of the infectious components. Finally, if we were to consider each metric equally important then $a$ would be our most important parameter but not by much. Though, if we were to consider each metric by itself than $s$ for attack rate, $y$ for peak infection time, and $s$ for peak infections would be the most important parameters. These results give us strong insights on the behavior effect on COVID-19.
 
 
 \subsection{Scenarios and Statistical Analysis}
 \FloatBarrier
-We have simulated five different likely behavior scenarios for COVID-19. These scenarios are summarized in Figure 2 and their output metrics are listed in Table 12 to Table 16. The first is a realistic scenario that tries to set the behavior parameter values to their likely values during the COVID-19 epidemic. The second is a more orderly population scenario with behavior parameters slightly smaller than the realistic scenario. The third scenario is a skeptic scenario with behavior parameters slightly higher than the realistic scenario. The fourth is a high testing scenario with behavior parameters similar to the realistic scenario except that the asymptomatic and pre-symptomatic parameters have values closer to their symptomatic parameter. Finally, the fifth is a mixed skeptic and testing scenario with behavioral parameter values in between the skeptic and testing scenarios. These scenarios help us understand how possible behavior affects COVID-19 outcomes.
+We have simulated five different likely behavior change scenarios for COVID-19. These scenarios are summarized in Figure 2 and their output metrics are listed in Table 12 to Table 16. The first is a realistic scenario that tries to set the behavior parameter values to their likely values during the COVID-19 epidemic. The second is a more orderly population scenario with behavior parameters slightly smaller than the realistic scenario. The third scenario is a skeptic scenario with behavior parameters slightly higher than the realistic scenario. The fourth is a high testing scenario with behavior parameters similar to the realistic scenario except that the asymptomatic and pre-symptomatic parameters have values closer to their symptomatic parameter. Finally, the fifth is a mixed skeptic and testing scenario with behavioral parameter values in between the skeptic and testing scenarios. These scenarios help us understand how possible behavior change affects COVID-19 outcomes. \par
 \begin{figure}[H]
-	\includegraphics[scale=0.43]{summaryscenario.png}
+	\centering
+	\vspace{-4cm}\includegraphics[scale=0.51]{summaryscenario.png}
 	\caption{Summary of all scenario runs.}
 \end{figure}
-
-The summary plot reveals some of the effects behavior change has on COVID-19. The first is that the COVID-19 epidemic is highly dependent on the display of symptoms. Furthermore, a population's slight skepticism towards COVID-19, which can be displayed in higher rates of contact, can lead to a significant increase in the attack rate and peak infections. Finally, if high levels of self testing were to impact behavior changes then COVID-19 would spread at a much smaller rate. Overall, behavior change has a significant effect on the outcome of the COVID-19 epidemic.
-
+The summary plot reveals some of the effects behavior change has on COVID-19. The first is that the COVID-19 epidemic is highly dependent on the display of symptoms. Furthermore, a population's slight skepticism towards COVID-19, which can be displayed in higher rates of contact, can lead to a significant increase in the attack rate and peak infections. Furthermore, if high levels of self testing were to impact behavior changes then COVID-19 would spread at a much smaller rate. Also, high levels of self-testing can reduce a skeptic population to the same degree as an orderly population but not to the same degree as a non-skeptic high self-testing population. Overall, behavior change has a significant effect on the outcome of the COVID-19 epidemic.
 \begin{table}[!h]
 	\centering
 	\begin{tabular}{|l|l|l|l|l|l|}
@@ -486,102 +451,55 @@ The summary plot reveals some of the effects behavior change has on COVID-19. Th
 		\hline
 		Metric          & Mean     & Std Dev  & Min     & Max       & Conf                 \\ [0.5ex]
 		\hline\hline
-		Attack Rate     & 0.04     & 0.03     & 0.00    & 0.13      & [0.03, 0.05]         \\
+		Attack Rate     & 0.14     & 0.06     & 0.01    & 0.23      & [0.12, 0.15]         \\
 		\hline
-		Peak Time       & 74299.35 & 62964.99 & 2424.81 & 247366.58 & [56223.23, 92375.48] \\
+		Peak Time       & 213896.71 & 151337.09 & 10910.30 & 633974.78 & [170450.53, 257342.89] \\
 		\hline
-		Peak Infections & 33.90    & 13.47    & 17.00   & 73.00     & [30.03, 37.77]       \\
+		Peak Infections & 70.74    & 29.38    & 18.00   & 139.00     & [62.30, 79.18]       \\
 		\hline
 	\end{tabular}
-	\caption{Output metrics for mixed skeptic and testing scenario. Input parameters are s=0.60, p=0.40, a=0.40, y=0.30, and the rest are defaults.}
+	\caption{Output metrics for mixed skeptic and testing scenario. Input parameters are s=0.55, p=0.50, a=0.50, y=0.30, and the rest are defaults.}
 \end{table}
 
 \FloatBarrier
-The output metrics give us some insight on COVID-19 and our simulation program itself. We notice that the larger the attack rate of a scenario the larger the confidence interval for peak infections. On the program itself, there are some discrepancies regarding some runs with low parameters where the disease randomly dies before spreading leading to skewed results. Overall, the output metrics reveal valuable insights on COVID-19 and our program.
-\\
+These output metrics give us some insight on COVID-19 and our simulation program itself. We notice that the larger the attack rate of a scenario the larger the confidence interval for peak infections. On the program itself, there are some discrepancies regarding some runs with low parameters where the disease randomly dies before spreading leading to skewed results. Overall, the output metrics reveal valuable insights on COVID-19 and our program. \par
 This analysis has given us a better understanding of the effect of behavior changes on COVID-19. Most importantly, that $a$ is our most important parameter on average while $s$ is the most important parameter for most categories. Furthermore, the COVID-19 epidemic is highly dependent on the display of symptoms and small changes in behavior. These results deeply influence the discussion of policy for COVID-19.
 \section{Validation}
-\FloatBarrier
-We have run multiple simulations in order to validate our program. These include realistic validation which is the same as the previous realistic scenario, an isolation validation which tested immediate isolation for infectious components, a no contact validation which tested immediate isolation for all components, an increased behavior validation which tested behavior parameters above 1.00, and an increased infectious population validation which tested large initial values for the infectious population.
-
-\begin{table}[!h]
+In order for our program to be useful it must mirror real world systems. To prove this we have prepared two methods which are Face Validation and Extreme Condition Testing. These methods will ensure that our program accurately simulates the COVID-19 epidemic.
+\subsection{Face Validation}
+Face validation is a technique that asks if a simulation makes logical sense. We have prepared three runs to face validate our system. The first is default validation which is the same as the default scenario in Results Analysis. The second is realistic validation which is also the same as the realistic scenario in Results Analysis. The third is an isolation validation which tests immediate isolation of infectious components. These runs will help us validate the surface characteristics of our program.
+\begin{figure}[H]
 	\centering
-	\begin{tabular}{|l|l|l|l|l|l|}
-		\hline
-		Metric          & Mean     & Std Dev & Min      & Max      & Conf                 \\ [0.5ex]
-		\hline\hline
-		Attack Rate     & 0.91     & 0.01    & 0.90     & 0.92     & [0.91, 0.91]         \\
-		\hline
-		Peak Time       & 77473.95 & 4518.47 & 68236.86 & 86551.22 & [76176.78, 78771.12] \\
-		\hline
-		Peak Infections & 1631.86  & 62.14   & 1498.00  & 1770.0   & [1614.02,1649.70]    \\
-		\hline
-	\end{tabular}
-	\caption{Output metrics for default face validation. All defaults.}
-\end{table}
-\begin{table}[!h]
+        \vspace{-4cm}\includegraphics[scale=0.47]{summaryfacevalidation.png}
+	\caption{Summary plot of default, realistic, and isolation face validation. Notice that default increases exponentially, peaks, and decreases exponentially. Also, notice that realistic has less infections than the previous plot and is wider. Furthermore, notice how isolation's susceptible population does not decrease.}
+\end{figure}
+Each example displays behavior that makes logical sense. The first example displays behavior typical of epidemics with an exponential increase, a peak, and a exponential decrease. The second example displays how normal behavioral change, such as the general population decreasing contact and symptomatic persons self-isolating, leads to less infections, a wider peak, and a longer epidemic. Finally, the third example shows how immediate self-isolation for the initial infected population leads to no outbreak of an epidemic. Overall, these runs show that our program's surface characteristics mirror a real world system.
+\subsection{Extreme Validation}
+Extreme validation is a technique to test a simulation with boundary values to determine whether or not a simulation handles extreme conditions realistically. Three runs have been prepared for extreme validation. The first is a no contact validation which tested immediate isolation for all components. The second is an increased behavior validation which tested behavior parameters above 1.00. The third is an increased infectious population validation which tested large initial values for the infectious population. These runs will ensure that our system mirrors real world systems in extreme conditions.
+\begin{figure}[H]
 	\centering
-	\begin{tabular}{|l|l|l|l|l|l|}
-		\hline
-		Metric          & Mean  & Std Dev & Min   & Max   & Conf           \\ [0.5ex]
-		\hline\hline
-		Attack Rate     & 0.00  & 0.00    & 0.00  & 0.00  & [0.00, 0.00]   \\
-		\hline
-		Peak Time       & 0.00  & 0.00    & 0.00  & 0.00  & [0.00, 0.00]   \\
-		\hline
-		Peak Infections & 15.00 & 0.00    & 15.00 & 15.00 & [15.00, 15.00] \\
-		\hline
-	\end{tabular}
-	\caption{Output metrics for isolation face validation. Input parameters are s=1.00, p=0.00, a=0.00, y=0.00, and the rest are defaults.}
-\end{table}
-
-\begin{table}[!h]
-	\centering
-	\begin{tabular}{|l|l|l|l|l|l|}
-		\hline
-		Metric          & Mean  & Std Dev & Min   & Max   & Conf           \\ [0.5ex]
-		\hline\hline
-		Attack Rate     & 0.00  & 0.00    & 0.00  & 0.00  & [0.00, 0.00]   \\
-		\hline
-		Peak Time       & 0.00  & 0.00    & 0.00  & 0.00  & [0.00, 0.00]   \\
-		\hline
-		Peak Infections & 15.00 & 0.00    & 15.00 & 15.00 & [15.00, 15.00] \\
-		\hline
-	\end{tabular}
-	\caption{Output metrics for no contact extreme validation. Input parameters are s=0.00 p=0.00, a=0.00, y=0.00, and the rest are defaults.}
-\end{table}
-
-\begin{table}[!h]
-	\centering
-	\begin{tabular}{|l|l|l|l|l|l|}
-		\hline
-		Metric          & Mean     & Std Dev & Min      & Max      & Conf                 \\ [0.5ex]
-		\hline\hline
-		Attack Rate     & 0.99     & 0.00    & 0.99     & 0.99     & [0.99, 0.99]         \\
-		\hline
-		Peak Time       & 49524.04 & 2462.67 & 44181.71 & 55768.42 & [48817.05, 50231.03] \\
-		\hline
-		Peak Infections & 2564.32  & 56.40   & 2436.00  & 2692.00  & [2548.13, 2580.51]   \\
-		\hline
-	\end{tabular}
-	\caption{Output metrics for increased contact extreme validation. Input parameters are s=1.50, p=1.50, a=1.50, y=1.50, and the rest are defaults.}
-\end{table}
-
-\begin{table}[!h]
-	\centering
-	\begin{tabular}{|l|l|l|l|l|l|}
-		\hline
-		Metric          & Mean     & Std Dev & Min      & Max      & Conf                 \\ [0.5ex]
-		\hline\hline
-		Attack Rate     & 0.91     & 0.01    & 0.89     & 0.92     & [0.90, 0.91]         \\
-		\hline
-		Peak Time       & 39419.95 & 2245.30 & 34238.54 & 44831.52 & [38775.37, 40064.54] \\
-		\hline
-		Peak Infections & 1871.58  & 57.33   & 1756.00  & 1967.00  & [1855.12, 1888.04]   \\
-		\hline
-	\end{tabular}
-	\caption{Output metrics for increased infected population extreme validation. Input parameters are N\_Y0=500 and the rest are defaults.}
-\end{table}
+	\vspace{-4cm}\includegraphics[scale=0.47]{extremevalidation.png}
+	\caption{Summary plot of zero contact, increase contact, and increase symptomatic population extreme validation. Notice how zero contact's susceptible population does not decrease. Also, notice that increased contact's infections increases exponentially, peaks, and decreases exponentially. Furthermore, notice that the increased symptomatic population starts with a large symptomatic population.}
+\end{figure}
+As you can tell each run displays correct behavior and executes without error. The first example correctly simulates the outcome of zero contact for each component which is a susceptible population that does not decrease. The second example shows that an increased contact rate scenario runs correctly with a relatively rapid rise and fall. Finally, the third and last example displays the correct outcome of an increased symptomatic population which is that the susceptible population immediately decreases and the infectious components increase quickly to mirror the symptomatic component. Overall, these runs show that our program behaves correctly in extreme conditions.
+\par
+The Face validation and Extreme validation methods have ensured that our program accurately simulates the COVID-19 epidemic. The default, normal, and isolation runs show that our program's surface characteristics mirror a real world system. Furthermore, the no contact, increased behavior, and increased infectious population runs show that our program behaves correctly in extreme conditions. By ensuring the validity of our program we can now safely discuss our results. 
+\section{Discussion}
+Throughout this document we have discovered several important findings and answered many of our research questions. For example, how do behavioral changes affect the spread of COVID-19? We answer by stating that $a$ on average is the most important parameter for all of our metrics while $s$ is the most important parameter for most of our metrics. Also, the non-symptomatic proportion of infections has a large effect on the epidemic, and scenarios that reduce their impact tend to lead to better outcomes while those that don't lead to worse. Of course lower contact rates especially with $s$ can also lead to good outcomes. Another question is what behavioral changes can contain the spread of COVID-19? We answer that by stating that an epidemic performs the best, meaning low peak infections, high peak times, and low attack rates during a high testing scenario. This project has described much of the behavioral effects on COVID-19.
+\par
+Our results also have some implications on government policy. Which is that since the non-symptomatic proportion of infections have a large impact on the attack rate and peak infections, the government should prioritize supporting accurate and widespread testing if it is available. Then it should promote in general a cautious attitude towards intimate contact so as to lower the contact rates of the whole population, especially the susceptible population, through public channels. Of course the most controllable method to reduce peak infections and the attack rate is to support the self-isolation of symptomatic individuals because they are easily identified. These actions can significantly reduce the spread and damage of COVID-19.
+\par
+Overall, this project has produced many valuable insights, implications, and results on the effect of behavioral change on COVID-19.
+\section{Conclusion}
+Our article contributes to a better understanding of COVID-19 and spreads awareness about the powerful effect behavior changes have on its spread. It described a COVID model that examines the COVID epidemic using the latest knowledge we have on the SARS-CoV-2 virus. Furthermore, unlike other models our model focuses specifically on component based behavior changes and it does this without being too complex to understand for the average person. This makes it a great model for users to understand the impact of behavior change on the spread of an epidemic. This can lead to users changing their behavior during future COVID outbreaks or future epidemics leading to better outcomes.\par
+This project has taught us countless lessons on project management, development, and modeling. It taught us the importance of initial research questions in keeping us on track. Furthermore, it taught us how essential it is to discern when tasks need to be dropped for the rest of the project to be completed in time. Also, it showed us how variable the time for software development tasks can be, especially when bugs and errors appear. On the domain side, we were taught the importance in striking a balance between simplicity and complexity when creating models. That a model should only be as complex as it needs to be to answer our research questions. Overall, we have learned many valuable lessons from this project.\par
+Though we completed this project there are still some improvements which we did not have time to complete. The most important of which is that some runs are skewed by cycles where the virus randomly and prematurely dies before spreading. This could have been solved by detecting whether a cycle has died prematurely and redoing that cycle until it does not. On the other hand a minor bug is that in some cases the averaging scheme for our plots creates infectious time series that end at one instead of zero, even though our component arrays do not. Some other potential improvements could be by adding more metrics such as R0 which we could not get an accurate measure of. All of these improvements could increase the quality of our model.\par
+In the future, we would like to research some of the ideas we thought of during our initial ideation. One of these initial ideas was to model the mutation of COVID strains so we could understand how behavior changes affect the production of SARS-CoV-2 variants. This would've given our article a much more interesting topic though we dropped this as we realized how unlikely and difficult it would be to accurately simulate a virus over such long periods. Though, some time in the future, if we have enough time and knowledge to implement this then I believe it would produce many interesting results and analyses.\par
+This article has taken a great effort and I thank all readers who have come this far.
 
 
+
+
+\newpage
+\printbibliography
 \end{document}
